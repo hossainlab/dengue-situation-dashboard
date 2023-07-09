@@ -1,5 +1,6 @@
 ---
 title: "Dengue Situation Dashboard"
+author: "Md. Jubayer Hossain"
 output: 
   flexdashboard::flex_dashboard:
     theme: flatly
