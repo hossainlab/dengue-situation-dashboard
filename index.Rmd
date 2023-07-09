@@ -1,0 +1,153 @@
+---
+title: "Dengue Situation Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    social: menu
+    source_code: https://github.com/hossainlab/monkeypox
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(highcharter)
+library(gt)
+library(htmltools)
+library(viridis)
+library(echarts4r)
+
+## Data cleaning 
+library(data.table)
+library(dplyr)
+library(tidyr)
+library(magrittr)
+library(purrr)
+library(forcats)
+library(purrr)
+
+## printing 
+library(glue)
+
+## Maps and Plots
+library(plotly)
+library(leaflet)
+library(leafpop)
+library(RColorBrewer)
+
+# Dates
+library(lubridate) 
+
+## For displaying tables
+library(DT)
+library(readxl)
+
+theme_set(theme_classic())
+```
+
+```{r, data-import, include=FALSE}
+# read multiple sheets
+data23 <- bind_rows("DengueCases2023.xlsx" %>%
+                     excel_sheets() %>%
+                     purrr::set_names()%>%
+                     map(read_excel, path = "DengueCases2023.xlsx"))
+
+data23$Date <- as.Date(data23$Date)
+```
+
+```{r, all-year, include=FALSE}
+# read dengue cases data from 2012 to 2023  
+all_cases_data <- read_excel("DengueCaseReporting[2012-23].xlsx", sheet = 1)
+
+# transform data 
+long_data <- all_cases_data %>% 
+  pivot_longer(cols = 2:13, names_to = "Year", values_to = "Cases") %>% 
+  mutate(Months = factor(Months, levels = month.name))
+head(long_data)
+```
+
+
+```{r, colors, include=FALSE}
+confirmed_color <- "lightsteelblue"
+active_color <- "orange"
+new_deaths_color <- "limegreen"
+death_color <- "red"
+```
+
+
+
+Overview  
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Confirmed Cases {.value-box}
+
+```{r}
+confirmed <- format(sum(data23$`Confirmed Cases`, na.rm = T), big.mark = ",")
+valueBox(value = confirmed, 
+         caption = "Total Confirmed Cases", 
+         color = confirmed_color)
+```
+
+
+### Confirmed Deaths {.value-box}
+```{r}
+deaths <- format(sum(data23$`Confirmed Deaths`, na.rm = T), big.mark = ",")
+valueBox(value = deaths, 
+         caption = "Total Deaths", 
+         color = death_color)
+```
+
+
+Row 
+-----------------------------------------------------------------------
+
+### Number of Confirmed Dengue Cases {data-width=700}
+
+```{r}
+fig1 <- ggplot(long_data, aes(x = Months, y = Cases)) + 
+  geom_point(size = 5)+
+  geom_line(color = "red")+
+  theme_minimal()+
+  theme(axis.text.x=element_text(angle = 60, hjust = 0))
+ggplotly(fig1)
+```
+
+
+
+### Number of Dengue Cases by Year and Month {data-width=700}
+
+```{r}
+fig2 <- ggplot(data = long_data, aes(x = Months, y = Cases, fill=Year))+
+  geom_bar(stat="identity")
+
+ggplotly(fig2)
+```
+
+
+Previous
+=======================================================================
+
+
+### Number of Dengue Cases by Year and Month {data-width=700}
+
+```{r}
+fig1 <- ggplot(data = long_data, aes(x = Months, y = Cases, fill=Year))+
+  geom_bar(stat="identity")
+
+ggplotly(fig1)
+```
+
+### Number of Dengue Cases by Year and Month {data-width=700}
+
+
+Summary  
+=======================================================================
+
+
+About  
+=======================================================================
+## Author
+[Md. Jubayer Hossain](https://hossainlab.github.io/) is the Founder, Management Lead and Data Analyst at CHIRAL Bangladesh. CHIRAL Bangladesh is a non-profit organization dedicated to health research to improve lives in Bangladesh. He aspires to maximize the quality of life of people around him by working at the intersection of education, technology, and health research. His research interests include public health, health data science, remote sensing, GIS applications in health,  and machine learning in healthcare. He has been teaching programming, data analysis, data science, and research methodology since 2020 in CHIRAL Bangladesh. Detailed research and teaching activities were found on his [website.](https://hossainlab.github.io/)  
+
