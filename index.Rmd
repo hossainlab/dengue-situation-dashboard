@@ -5,7 +5,7 @@ output:
     theme: flatly
     orientation: rows
     social: menu
-    source_code: https://github.com/hossainlab/dengue-situation-dashboard
+    source_code: https://github.com/hossainlab/dengue-situation-dashboar
 ---
 
 ```{r setup, include=FALSE}
@@ -101,7 +101,7 @@ Row
 ```{r}
 confirmed <- format(sum(data23$`Confirmed Cases`, na.rm = T), big.mark = ",")
 valueBox(value = confirmed, 
-         caption = "Total Confirmed Cases", 
+         caption = "Total Confirmed Cases in 2023", 
          color = confirmed_color)
 ```
 
@@ -110,7 +110,7 @@ valueBox(value = confirmed,
 ```{r}
 deaths <- format(sum(data23$`Confirmed Deaths`, na.rm = T), big.mark = ",")
 valueBox(value = deaths, 
-         caption = "Total Deaths", 
+         caption = "Total Death Cases in 2023", 
          color = death_color)
 ```
 
@@ -119,29 +119,34 @@ Row
 -----------------------------------------------------------------------
 ### Number of Confirmed Dengue Cases [2023]
 ```{r}
-fig1 <- plot_ly(data23, x = ~Date, y = ~`Confirmed Cases`, name = 'Confirmed Cases', type = 'scatter', mode = 'lines') 
+fig23 <- plot_ly(data23, x = ~Date, y = ~`Confirmed Cases`, name = 'Confirmed Cases', type = 'scatter', mode = 'lines') 
 
-fig1 <- fig1 %>% 
+fig23 <- fig23 %>% 
   add_trace(y = ~`Confirmed Deaths`, name = 'Confirmed Deaths',type = 'scatter', mode = 'lines') 
 
-fig1
+fig23
 ```
 
 ### Number of Dengue Cases by Year [2012-2023]
 
 ```{r}
-fig2 <- ggplot(data = long_cases_data, aes(x = Year, y = Cases))+
+case_sum_df <- long_cases_data %>% 
+  group_by(Year) %>% 
+  summarise(TotalCases = sum(Cases))
+
+fig_cases <- ggplot(data = case_sum_df, aes(x = Year, y = TotalCases))+
   geom_bar(stat="identity", fill="#003f5c")+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig2)
+ggplotly(fig_cases)
 ```
+
 
 
 Row
 -----------------------------------------------------------------------
 
-### Number of Confirmed Dengue Cases [2012-2023]
+### Number of Confirmed Dengue Cases by Month [2012-2023]
 
 ```{r}
 fig3 <- ggplot(data = long_cases_data, 
@@ -156,12 +161,88 @@ ggplotly(fig3)
 ### Number of Dengue Deaths Cases by Year [2015-2023]
 
 ```{r}
-fig4 <- ggplot(data = long_deaths_data, aes(x = Year, y = `Death Cases`))+
+death_sum_df <- long_deaths_data %>%
+  group_by(Year) %>% 
+  summarise(TotalDeaths = sum(`Death Cases`))
+
+fig_deaths <- ggplot(data = death_sum_df, aes(x = Year, y=TotalDeaths))+
+  geom_bar(stat="identity", fill="#ff7c43")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+ggplotly(fig_deaths)
+
+```
+
+
+
+Last Three Years  
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+### Last Three Years Denge Cases by Month
+
+```{r}
+last3<- long_cases_data %>% 
+  filter(Year == c(2021, 2022, 2023))
+
+fig_cases_month <- ggplot(data = last3, 
+               aes(x = Months, y = Cases, group=Year, color=Year))+
+  geom_line()+
+  theme_minimal()+ 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+ggplotly(fig_cases_month)
+```
+
+
+### Last Three Years Denge Cases by Year [2021-2023]
+
+```{r}
+last3_sum_df <- long_cases_data %>% 
+  filter(Year == c(2021, 2022, 2023)) %>% 
+  group_by(Year) %>% 
+  summarise(TotalCases = sum(Cases))
+
+fig_cases_year <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalCases))+
+  geom_bar(stat="identity", fill="#d45087")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+ggplotly(fig_cases_year)
+```
+
+
+Row
+-----------------------------------------------------------------------
+### Last Three Years Denge Deaths by Month
+
+```{r}
+last3<- long_deaths_data %>% 
+  filter(Year == c(2021, 2022, 2023))
+
+fig_deaths_month <- ggplot(data = last3, 
+               aes(x = Months, y = `Death Cases`, group=Year, color=Year))+
+  geom_line()+
+  theme_minimal()+ 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+ggplotly(fig_deaths_month)
+```
+
+
+### Last Three Years Denge Deaths by Year [2021-2023]
+
+```{r}
+last3_sum_df <- long_deaths_data %>% 
+  filter(Year == c(2021, 2022, 2023)) %>% 
+  group_by(Year) %>% 
+  summarise(TotalDeaths = sum(`Death Cases`)) 
+
+fig_last3_deaths <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalDeaths))+
   geom_bar(stat="identity", fill="#a05195")+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig4)
+ggplotly(fig_last3_deaths)
 ```
+
 
 
 
@@ -185,22 +266,22 @@ By providing real-time updates and an intuitive interface, the Dengue Situation 
 Overall, the Dengue Situation Dashboard based on the DGHS data and developed using flexdashboard is a valuable tool that enhances the understanding of the dengue situation in Bangladesh. By leveraging the power of data visualization and real-time information, this dashboard supports evidence-based decision-making and facilitates effective response measures to combat dengue outbreaks in the country.
 
 
-Summary  
+Dengue - Bangladesh
 =======================================================================
+**Outbreak at a glance** 
 
-### Last Three Years Cases
+As of 20 November 2022, a total of 52 807 laboratory-confirmed dengue cases and 230 related deaths have been reported by the Ministry of Health & Family Welfare of Bangladesh since 1 January 2022 with a case fatality rate (CFR) of 0.44%. Dengue is endemic in Bangladesh however a surge of cases started in June 2022. Currently, all eight divisions in the country are reporting cases and deaths. This is the second-largest outbreak since 2000, with the largest having occurred in 2019. The current dengue outbreak is unusual in its scale and seasonality.
 
-```{r}
-last3<- long_cases_data %>% 
-  filter(Year == c(2021, 2022, 2023))
+**Description of the outbreak**
 
-fig2 <- ggplot(data = last3, 
-               aes(x = Months, y = Cases, group=Year, color=Year))+
-  geom_line()+
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig2)
-```
+Between 1 January and 20 November 2022, a total of 52 807 dengue cases including 230 related deaths (case fatality rate = 0.44%) were reported by the Ministry of Health & Family Welfare (MOHFW) (Figure 1). The cases were confirmed either by non-structural protein (NS1) diagnostic kits or by Immunoglobulin M (IgM) tests. According to information available for 40% of reported cases (n=20 982) the median age is 25 years (range: 0 – 89) with males accounting for 60% of the cases. This is the second highest annual number of cases since 2000, the highest having occurred in 2019, when 101 354 cases including 164 deaths were reported (Figure 2 & 3).
+
+The most affected division is Dhaka, accounting for 70.6% of cases and 60.4% of deaths. Dhaka city, the largest city in Bangladesh, located in Dhaka division, has reported 64.5% (n= 34 071) of the total number of cases. Other affected divisions include Chattogram division (13.2% of cases and 24.8% of deaths) and Khulna division (5.5% of cases and 4.8% of deaths) (Figure 4).
+
+The high incidence of dengue cases this year is taking place in the context of an unusual amount of rainfall since June 2022, accompanied by high temperatures and high humidity which have resulted in an increased mosquito population throughout Bangladesh.
+
+Source: https://www.who.int/emergencies/disease-outbreak-news/item/2022-DON424
+
 
 
 About  
