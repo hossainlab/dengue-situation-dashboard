@@ -8,28 +8,15 @@ output:
     source_code: https://github.com/hossainlab/dengue-situation-dashboar
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+# dashboard 
 library(flexdashboard)
 library(tidyverse)
-library(highcharter)
-library(gt)
-library(htmltools)
+library(sjPlot)
 library(viridis)
-library(echarts4r)
+library(rio)
 
-## Data cleaning 
-library(data.table)
-library(dplyr)
-library(tidyr)
-library(magrittr)
-library(purrr)
-library(forcats)
-library(purrr)
-
-## printing 
-library(glue)
-
-## Maps and Plots
+# Maps and Plots
 library(plotly)
 library(leaflet)
 library(leafpop)
@@ -46,11 +33,10 @@ theme_set(theme_classic())
 ```
 
 
-
 ```{r, colors, include=FALSE}
 confirmed_color <- "lightsteelblue"
 active_color <- "orange"
-new_deaths_color <- "limegreen"
+recovered_color <- "limegreen"
 death_color <- "red"
 ```
 
@@ -58,7 +44,7 @@ death_color <- "red"
 
 ```{r, cases-all, include=FALSE}
 # read dengue cases data from 2012 to 2023  
-all_cases_data <- read_excel("DengueCaseReporting[2012-23].xlsx", sheet = 1)
+all_cases_data <- read_excel("data/DengueCaseReporting[2012-23].xlsx", sheet = 1)
 
 # transform data 
 long_cases_data <- all_cases_data %>% 
@@ -70,7 +56,7 @@ long_cases_data$Year <- as.factor(long_cases_data$Year )
 
 ```{r, deaths-all, include=FALSE}
 # read dengue deaths cases data from 2015 to 2023  
-all_deaths_data <- read_excel("DengueCaseReporting[2012-23].xlsx", sheet = 2)
+all_deaths_data <- read_excel("data/DengueCaseReporting[2012-23].xlsx", sheet = 2)
 
 # transform data 
 long_deaths_data <- all_deaths_data %>% 
@@ -79,12 +65,13 @@ long_deaths_data <- all_deaths_data %>%
 long_deaths_data$Year <- as.factor(long_deaths_data$Year)
 ```
 
+
 ```{r, data-import, include=FALSE}
 # read multiple sheets
-data23 <- bind_rows("DengueCases2023.xlsx" %>%
-                     excel_sheets() %>%
-                     purrr::set_names()%>%
-                     map(read_excel, path = "DengueCases2023.xlsx"))
+data23 <- import_list(here::here("data/DengueCases2023.xlsx"),
+                    setclass = "data.table", 
+                    rbind_label = "file", 
+                    rbind = TRUE)
 
 data23$Date <- as.Date(data23$Date)
 ```
@@ -99,7 +86,7 @@ Row
 ### Confirmed Cases {.value-box}
 
 ```{r}
-confirmed <- format(sum(data23$`Confirmed Cases`, na.rm = T), big.mark = ",")
+confirmed <- format(sum(data23$Cases, na.rm = T), big.mark = ",")
 valueBox(value = confirmed, 
          caption = "Total Confirmed Cases in 2023", 
          color = confirmed_color)
@@ -108,10 +95,28 @@ valueBox(value = confirmed,
 
 ### Confirmed Deaths {.value-box}
 ```{r}
-deaths <- format(sum(data23$`Confirmed Deaths`, na.rm = T), big.mark = ",")
+deaths <- format(sum(data23$Deaths, na.rm = T), big.mark = ",")
 valueBox(value = deaths, 
          caption = "Total Death Cases in 2023", 
          color = death_color)
+```
+
+
+### Recovered Cases {.value-box}
+```{r}
+recovered <- format(sum(data23$Recovered, na.rm = T), big.mark = ",")
+valueBox(value = recovered, 
+         caption = "Total Recovered Cases in 2023", 
+         color = recovered_color)
+```
+
+### Active Cases {.value-box}
+```{r}
+data23$Active <- data23$Cases - data23$Deaths - data23$Recovered
+active <- format(sum(data23$Active, na.rm = T), big.mark = ",")
+valueBox(value = active, 
+         caption = "Total Active Cases in 2023", 
+         color = active_color)
 ```
 
 
@@ -119,10 +124,14 @@ Row
 -----------------------------------------------------------------------
 ### Number of Confirmed Dengue Cases [2023]
 ```{r}
-fig23 <- plot_ly(data23, x = ~Date, y = ~`Confirmed Cases`, name = 'Confirmed Cases', type = 'scatter', mode = 'lines') 
+fig23 <- plot_ly(data23, x = ~Date, y = ~Cases, name = 'Cases', type = 'scatter', mode = 'lines') 
 
 fig23 <- fig23 %>% 
-  add_trace(y = ~`Confirmed Deaths`, name = 'Confirmed Deaths',type = 'scatter', mode = 'lines') 
+  add_trace(y = ~Deaths, name = 'Deaths',type = 'scatter', mode = 'lines') 
+
+fig23 <- fig23 %>% 
+  add_trace(y = ~Recovered, name = 'Recovered',type = 'scatter', mode = 'lines') 
+
 
 fig23
 ```
