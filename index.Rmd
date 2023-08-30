@@ -2,18 +2,7 @@
 title: "Dengue Situation Dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    theme: 
-      version: 4
-      bootswatch: minty
-      base_font: 
-        google: Prompt
-      heading_font:
-        google: Sen
-      code_font:
-        google: 
-          # arguments to sass::font_google() 
-          family: JetBrains Mono
-          local: false
+    theme: flatly
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboar
@@ -171,7 +160,9 @@ Row
 fig3 <- ggplot(data = long_cases_data, 
                aes(x = Months, y = Cases, fill=Year))+
   geom_bar(stat="identity")+
-  theme_minimal()
+  theme_minimal()+ 
+  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+
 ggplotly(fig3)
 ```
 
@@ -307,4 +298,7 @@ About
 **Author**
 
 [Md. Jubayer Hossain](https://hossainlab.github.io/) is the Founder, Management Lead and Data Analyst at CHIRAL Bangladesh. CHIRAL Bangladesh is a non-profit organization dedicated to health research to improve lives in Bangladesh. He aspires to maximize the quality of life of people around him by working at the intersection of education, technology, and health research. His research interests include public health, health data science, remote sensing, GIS applications in health,  and machine learning in healthcare. He has been teaching programming, data analysis, data science, and research methodology since 2020 in CHIRAL Bangladesh. Detailed research and teaching activities were found on his [website.](https://hossainlab.github.io/)  
+
+
+
 
