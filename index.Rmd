@@ -122,7 +122,7 @@ valueBox(value = active,
 
 Row
 -----------------------------------------------------------------------
-### Number of Confirmed Dengue Cases [2023]
+### Dengue Cases Over Time [2023]
 ```{r}
 fig23 <- plot_ly(data23, x = ~Date, y = ~Cases, name = 'Cases', type = 'scatter', mode = 'lines') 
 
