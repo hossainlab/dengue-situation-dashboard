@@ -2,7 +2,18 @@
 title: "Dengue Situation Dashboard"
 output: 
   flexdashboard::flex_dashboard:
-    theme: flatly
+    theme: 
+      version: 4
+      bootswatch: minty
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+      code_font:
+        google: 
+          # arguments to sass::font_google() 
+          family: JetBrains Mono
+          local: false
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboar
@@ -60,7 +71,7 @@ all_deaths_data <- read_excel("data/DengueCaseReporting[2012-23].xlsx", sheet = 
 
 # transform data 
 long_deaths_data <- all_deaths_data %>% 
-  pivot_longer(cols = 2:10, names_to = "Year", values_to = "Death Cases") %>% 
+  pivot_longer(cols = 2:10, names_to = "Year", values_to = "Deaths") %>% 
   mutate(Months = factor(Months, levels = month.name))
 long_deaths_data$Year <- as.factor(long_deaths_data$Year)
 ```
@@ -132,7 +143,6 @@ fig23 <- fig23 %>%
 fig23 <- fig23 %>% 
   add_trace(y = ~Recovered, name = 'Recovered',type = 'scatter', mode = 'lines') 
 
-
 fig23
 ```
 
@@ -151,7 +161,6 @@ ggplotly(fig_cases)
 ```
 
 
-
 Row
 -----------------------------------------------------------------------
 
@@ -159,27 +168,26 @@ Row
 
 ```{r}
 fig3 <- ggplot(data = long_cases_data, 
-               aes(x = Months, y = Cases, group=Year, color=Year))+
-  geom_line()+
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+               aes(x = Months, y = Cases, fill=Year))+
+  geom_bar(stat="identity")+
+  theme_minimal()
 ggplotly(fig3)
 ```
 
 
-### Number of Dengue Deaths Cases by Year [2015-2023]
+### Number of Dengue Deaths Cases by Year
 
 ```{r}
 death_sum_df <- long_deaths_data %>%
+  filter(Year %in% c(2019, 2022, 2023)) %>% 
   group_by(Year) %>% 
-  summarise(TotalDeaths = sum(`Death Cases`))
+  summarise(TotalDeaths = sum(Deaths))
 
 fig_deaths <- ggplot(data = death_sum_df, aes(x = Year, y=TotalDeaths))+
   geom_bar(stat="identity", fill="#ff7c43")+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
 ggplotly(fig_deaths)
-
 ```
 
 
@@ -229,7 +237,7 @@ last3<- long_deaths_data %>%
   filter(Year == c(2021, 2022, 2023))
 
 fig_deaths_month <- ggplot(data = last3, 
-               aes(x = Months, y = `Death Cases`, group=Year, color=Year))+
+               aes(x = Months, y = Deaths, group=Year, color=Year))+
   geom_line()+
   theme_minimal()+ 
   theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
@@ -243,7 +251,7 @@ ggplotly(fig_deaths_month)
 last3_sum_df <- long_deaths_data %>% 
   filter(Year == c(2021, 2022, 2023)) %>% 
   group_by(Year) %>% 
-  summarise(TotalDeaths = sum(`Death Cases`)) 
+  summarise(TotalDeaths = sum(Deaths)) 
 
 fig_last3_deaths <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalDeaths))+
   geom_bar(stat="identity", fill="#a05195")+
