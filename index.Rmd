@@ -151,6 +151,7 @@ fig23
 ```{r}
 case_sum_df <- long_cases_data %>% 
   group_by(Year) %>% 
+  top_n(5) %>% 
   summarise(TotalCases = sum(Cases))
 
 fig_cases <- ggplot(data = case_sum_df, aes(x = Year, y = TotalCases))+
