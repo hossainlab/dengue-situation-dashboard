@@ -34,7 +34,22 @@ ggplot(data, aes(x = Date))+
   
 
 
+# environment trends 
+data23 %>% 
+  arrange(Cases) %>%
+  ggplot(aes(x = Date))+ 
+    geom_line(aes(y = Cases, color = "Confirmed Cases"))+ 
+    geom_line(aes(y = Precipitation, color = "Precipitation"))+ 
+    geom_line(aes(y = Temperature_C, color = "Temperature (C)"))+ 
+    labs(title = "Dengue cases and environmental parameters trend over time",
+         x = "Date", 
+         y = "Count")+
+    scale_color_manual("Dengue Cases", 
+                       values = c("Confirmed Cases" = "red", 
+                                  "Precipitation" = "black", 
+                                  "Temperature (C)" = "green")) 
 
+ggplotly(p)
 
 fig3 <- ggplot(data = long_cases_data, 
                aes(x = Months, y = Cases, group=Year, color=Year))+
