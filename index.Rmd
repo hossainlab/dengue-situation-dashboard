@@ -12,6 +12,7 @@ output:
 # dashboard 
 library(flexdashboard)
 library(tidyverse)
+library(readxl)
 library(sjPlot)
 library(viridis)
 library(rio)
@@ -41,52 +42,67 @@ death_color <- "red"
 ```
 
 
+```{r, load-data}
+# cases data 
+dengue_cases <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 1)
+dengue_cases <- dengue_cases |> mutate(Months = factor(Months, levels = month.name)) 
 
-```{r, cases-all, include=FALSE}
-# read dengue cases data from 2012 to 2023  
-all_cases_data <- read_excel("data/DengueCaseReporting[2012-23].xlsx", sheet = 1)
 
-# transform data 
-long_cases_data <- all_cases_data %>% 
-  pivot_longer(cols = 2:13, names_to = "Year", values_to = "Cases") %>% 
-  mutate(Months = factor(Months, levels = month.name))
 
-long_cases_data$Year <- as.factor(long_cases_data$Year )
+# deaths data 
+dengue_deaths <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 2)
+dengue_deaths <- dengue_deaths |> mutate(Months = factor(Months, levels = month.name)) 
+
+# daily data 
+daily_data_23 <- import_list(here::here("data/DengueCases2023.xlsx"),
+                      setclass = "data.table", 
+                      rbind_label = "file", 
+                      rbind = TRUE)
+
+daily_data_23$Date <- as.Date(daily_data_23$Date)
 ```
 
-```{r, deaths-all, include=FALSE}
-# read dengue deaths cases data from 2015 to 2023  
-all_deaths_data <- read_excel("data/DengueCaseReporting[2012-23].xlsx", sheet = 2)
+```{r, data-preprocessing}
 
-# transform data 
-long_deaths_data <- all_deaths_data %>% 
-  pivot_longer(cols = 2:10, names_to = "Year", values_to = "Deaths") %>% 
-  mutate(Months = factor(Months, levels = month.name))
-long_deaths_data$Year <- as.factor(long_deaths_data$Year)
+# transform data into long format for visualizations 
+# cases 
+long_cases_data <- dengue_cases |> 
+  pivot_longer(cols = 2:13, names_to = "Year", values_to = "Cases") |> 
+  mutate(Months = factor(Months, levels = month.name)) 
+
+# deaths 
+long_deaths_data <- dengue_deaths |> 
+  pivot_longer(cols = 2:10, names_to = "Year", values_to = "Deaths") |> 
+  mutate(Months = factor(Months, levels = month.name)) 
+
+
+# join data 
+all_years <- left_join(long_cases_data, long_deaths_data, 
+                    by = c("Months", "Year"))
+
+# Monthly dengue cases for 2023 
+long_cases_data_23 <- long_cases_data|> 
+  filter(Year == 2023)
+
+long_deaths_data_23 <- long_deaths_data|> 
+  filter(Year == 2023)
+
+# join data 
+data23 <- left_join(long_cases_data_23, long_deaths_data_23, 
+                    by = c("Months", "Year"))
 ```
 
-
-```{r, data-import, include=FALSE}
-# read multiple sheets
-data23 <- import_list(here::here("data/DengueCases2023.xlsx"),
-                    setclass = "data.table", 
-                    rbind_label = "file", 
-                    rbind = TRUE)
-
-data23$Date <- as.Date(data23$Date)
-```
 
 
 Overview  
-=======================================================================
+=====================================================================
 
 Row
------------------------------------------------------------------------
-
+---------------------------------------------------------------------
 ### Confirmed Cases {.value-box}
 
 ```{r}
-confirmed <- format(sum(data23$Cases, na.rm = T), big.mark = ",")
+confirmed <- format(sum(daily_data_23$Cases, na.rm = T), big.mark = ",")
 valueBox(value = confirmed, 
          caption = "Total Confirmed Cases in 2023", 
          color = confirmed_color)
@@ -95,7 +111,7 @@ valueBox(value = confirmed,
 
 ### Confirmed Deaths {.value-box}
 ```{r}
-deaths <- format(sum(data23$Deaths, na.rm = T), big.mark = ",")
+deaths <- format(sum(daily_data_23$Deaths, na.rm = T), big.mark = ",")
 valueBox(value = deaths, 
          caption = "Total Death Cases in 2023", 
          color = death_color)
@@ -104,7 +120,7 @@ valueBox(value = deaths,
 
 ### Recovered Cases {.value-box}
 ```{r}
-recovered <- format(sum(data23$Recovered, na.rm = T), big.mark = ",")
+recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
 valueBox(value = recovered, 
          caption = "Total Recovered Cases in 2023", 
          color = recovered_color)
@@ -112,8 +128,8 @@ valueBox(value = recovered,
 
 ### Active Cases {.value-box}
 ```{r}
-data23$Active <- data23$Cases - data23$Deaths - data23$Recovered
-active <- format(sum(data23$Active, na.rm = T), big.mark = ",")
+daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_23$Recovered
+active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
 valueBox(value = active, 
          caption = "Total Active Cases in 2023", 
          color = active_color)
@@ -122,66 +138,92 @@ valueBox(value = active,
 
 Row
 -----------------------------------------------------------------------
-### Dengue Cases Over Time [2023]
+### Daily Confirmed, Death, and Recovered Cases Over Time in 2023
 ```{r}
-fig23 <- plot_ly(data23, x = ~Date, y = ~Cases, name = 'Cases', type = 'scatter', mode = 'lines') 
-
-fig23 <- fig23 %>% 
-  add_trace(y = ~Deaths, name = 'Deaths',type = 'scatter', mode = 'lines') 
-
-fig23 <- fig23 %>% 
-  add_trace(y = ~Recovered, name = 'Recovered',type = 'scatter', mode = 'lines') 
-
-fig23
+# Daily dengue pattern 
+# Create a time series line plot
+plot_ly(data = daily_data_23, x = ~Date, type = 'scatter', mode = 'lines+markers', 
+        name = 'Cases', y = ~Cases) %>%
+  add_trace(y = ~Deaths, name = 'Deaths', line = list(color="black")) %>%
+  add_trace(y = ~Recovered, name = 'Recovered') %>%
+  layout(xaxis = list(title = 'Date'),
+         yaxis = list(title = 'Count'))
 ```
 
-### Number of Dengue Cases by Year [2012-2023]
+### Number of Dengue Cases in 2023
 
 ```{r}
-case_sum_df <- long_cases_data %>% 
-  group_by(Year) %>% 
-  top_n(5) %>% 
-  summarise(TotalCases = sum(Cases))
+# bar charts for dengue cases in 2023 
+plot_ly(data = data23, x = ~Months)  |> 
+  add_bars(y = ~Cases, name = 'Confirmed Cases') |> 
+  add_trace(y = ~Cases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  # Add other years similarly
+  layout(xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Confirmed Cases'))
+```
 
-fig_cases <- ggplot(data = case_sum_df, aes(x = Year, y = TotalCases))+
-  geom_bar(stat="identity", fill="#003f5c")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_cases)
+
+### Number of Death Cases in 2023
+```{r}
+# bar charts for dengue deaths in 2023 
+plot_ly(data = data23, x = ~Months) |> 
+  add_bars(y = ~Deaths, name = 'Confirmed Deaths', marker = list(color = 'black')) |> 
+  add_trace(y = ~Deaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  layout(xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Death Cases'))
 ```
 
 
 Row
 -----------------------------------------------------------------------
-
 ### Number of Confirmed Dengue Cases by Month [2012-2023]
 
 ```{r}
-fig3 <- ggplot(data = long_cases_data, 
-               aes(x = Months, y = Cases, fill=Year))+
-  geom_bar(stat="identity")+
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
+# Dengue Cases by year 
+plot_ly(data = dengue_cases, x = ~Months)  |> 
+  add_bars(y = ~`2012`, name = '2012') |>
+  add_bars(y = ~`2013`, name = '2013') |>
+  add_bars(y = ~`2014`, name = '2014') |>
+  add_bars(y = ~`2015`, name = '2015') |>
+  add_bars(y = ~`2016`, name = '2016') |>
+  add_bars(y = ~`2017`, name = '2017') |>
+  add_bars(y = ~`2018`, name = '2018') |>
+  add_bars(y = ~`2019`, name = '2019') |>
+  add_bars(y = ~`2020`, name = '2020') |>
+  add_bars(y = ~`2021`, name = '2021') |>
+  add_bars(y = ~`2022`, name = '2022') |>
+  add_bars(y = ~`2023`, name = '2023') |>
+  layout(xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Confirmed Cases'))
+```
 
-ggplotly(fig3)
+### Number of Dengue Death Cases by Month [2015-2023]
+```{r}
+# Dengue deaths by year 
+plot_ly(data = dengue_deaths, x = ~Months)  |> 
+  add_bars(y = ~`2015`, name = '2015') |>
+  add_bars(y = ~`2016`, name = '2016') |>
+  add_bars(y = ~`2017`, name = '2017') |>
+  add_bars(y = ~`2018`, name = '2018') |>
+  add_bars(y = ~`2019`, name = '2019') |>
+  add_bars(y = ~`2020`, name = '2020') |>
+  add_bars(y = ~`2021`, name = '2021') |>
+  add_bars(y = ~`2022`, name = '2022') |>
+  add_bars(y = ~`2023`, name = '2023') |>
+  layout(xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Death Cases'))
 ```
 
 
-### Number of Dengue Deaths Cases by Year
+### Number of Confirmed and Deaths Cases by Year [2012-2023]
 
 ```{r}
-death_sum_df <- long_deaths_data %>%
-  filter(Year %in% c(2019, 2022, 2023)) %>% 
-  group_by(Year) %>% 
-  summarise(TotalDeaths = sum(Deaths))
-
-fig_deaths <- ggplot(data = death_sum_df, aes(x = Year, y=TotalDeaths))+
-  geom_bar(stat="identity", fill="#ff7c43")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_deaths)
+# Create a bar chart to show the yearly sum of cases and deaths
+plot_ly(data = all_years, x = ~Year, y = ~Cases, type = 'bar', name = 'Cases') %>%
+  add_trace(y = ~Deaths, name = 'Deaths') %>%
+  layout(xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Cases'))
 ```
-
 
 
 Last Three Years  
@@ -192,7 +234,7 @@ Row
 ### Last Three Years Denge Cases by Month
 
 ```{r}
-last3<- long_cases_data %>% 
+last3 <- long_cases_data %>% 
   filter(Year == c(2021, 2022, 2023))
 
 fig_cases_month <- ggplot(data = last3, 
