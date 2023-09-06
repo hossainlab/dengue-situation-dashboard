@@ -6,6 +6,8 @@ output:
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboar
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
@@ -16,6 +18,10 @@ library(readxl)
 library(sjPlot)
 library(viridis)
 library(rio)
+library(viridis)
+library(denguedatahub)
+library(visdat)
+
 
 # Maps and Plots
 library(plotly)
@@ -125,6 +131,7 @@ valueBox(value = recovered,
          caption = "Total Recovered Cases in 2023", 
          color = recovered_color)
 ```
+
 
 ### Active Cases {.value-box}
 ```{r}
