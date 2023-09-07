@@ -1,8 +1,7 @@
 ---
-title: "Dengue Situation Dashboard"
+title: "Dengue Situation in Bangladesh"
 output: 
   flexdashboard::flex_dashboard:
-    theme: flatly
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboar
@@ -22,7 +21,6 @@ library(viridis)
 library(denguedatahub)
 library(visdat)
 
-
 # Maps and Plots
 library(plotly)
 library(leaflet)
@@ -41,10 +39,10 @@ theme_set(theme_classic())
 
 
 ```{r, colors, include=FALSE}
-confirmed_color <- "lightsteelblue"
-active_color <- "orange"
-recovered_color <- "limegreen"
-death_color <- "red"
+confirmed_color <- "#FF5733"
+active_color <- "#FFD700"
+recovered_color <- "#00FF00"
+death_color <- "#333333"
 ```
 
 
@@ -69,7 +67,6 @@ daily_data_23$Date <- as.Date(daily_data_23$Date)
 ```
 
 ```{r, data-preprocessing}
-
 # transform data into long format for visualizations 
 # cases 
 long_cases_data <- dengue_cases |> 
@@ -86,6 +83,8 @@ long_deaths_data <- dengue_deaths |>
 all_years <- left_join(long_cases_data, long_deaths_data, 
                     by = c("Months", "Year"))
 
+all_years$Year <- as.factor(all_years$Year)
+
 # Monthly dengue cases for 2023 
 long_cases_data_23 <- long_cases_data|> 
   filter(Year == 2023)
@@ -98,20 +97,19 @@ data23 <- left_join(long_cases_data_23, long_deaths_data_23,
                     by = c("Months", "Year"))
 ```
 
-
-
 Overview  
-=====================================================================
+===================================================================
 
 Row
----------------------------------------------------------------------
+-------------------------------------------------------------------
 ### Confirmed Cases {.value-box}
 
 ```{r}
 confirmed <- format(sum(daily_data_23$Cases, na.rm = T), big.mark = ",")
 valueBox(value = confirmed, 
          caption = "Total Confirmed Cases in 2023", 
-         color = confirmed_color)
+         color = confirmed_color, 
+         icon = "fa-virus")
 ```
 
 
@@ -120,7 +118,8 @@ valueBox(value = confirmed,
 deaths <- format(sum(daily_data_23$Deaths, na.rm = T), big.mark = ",")
 valueBox(value = deaths, 
          caption = "Total Death Cases in 2023", 
-         color = death_color)
+         color = death_color, 
+         icon = "fa-exclamation-triangle")
 ```
 
 
@@ -129,7 +128,8 @@ valueBox(value = deaths,
 recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
 valueBox(value = recovered, 
          caption = "Total Recovered Cases in 2023", 
-         color = recovered_color)
+         color = recovered_color, 
+         icon = "fa-check-circle")
 ```
 
 
@@ -139,7 +139,8 @@ daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_
 active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
 valueBox(value = active, 
          caption = "Total Active Cases in 2023", 
-         color = active_color)
+         color = active_color, 
+         icon = "fa-skull")
 ```
 
 
@@ -147,37 +148,47 @@ Row
 -----------------------------------------------------------------------
 ### Daily Confirmed, Death, and Recovered Cases Over Time in 2023
 ```{r}
-# Daily dengue pattern 
-# Create a time series line plot
+# Viz 1: Daily Confirmed, Death, and Recovered Cases Over Time in 2023
 plot_ly(data = daily_data_23, x = ~Date, type = 'scatter', mode = 'lines+markers', 
         name = 'Cases', y = ~Cases) %>%
   add_trace(y = ~Deaths, name = 'Deaths', line = list(color="black")) %>%
   add_trace(y = ~Recovered, name = 'Recovered') %>%
   layout(xaxis = list(title = 'Date'),
-         yaxis = list(title = 'Count'))
+         yaxis = list(title = 'Count'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 ### Number of Dengue Cases in 2023
 
 ```{r}
-# bar charts for dengue cases in 2023 
+# Viz 2: Number of Dengue Cases in 2023
 plot_ly(data = data23, x = ~Months)  |> 
   add_bars(y = ~Cases, name = 'Confirmed Cases') |> 
   add_trace(y = ~Cases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
-  # Add other years similarly
   layout(xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Number of Confirmed Cases'))
+         yaxis = list(title = 'Number of Confirmed Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 
 ### Number of Death Cases in 2023
 ```{r}
-# bar charts for dengue deaths in 2023 
+# Viz 3: Number of Death Cases in 2023
 plot_ly(data = data23, x = ~Months) |> 
   add_bars(y = ~Deaths, name = 'Confirmed Deaths', marker = list(color = 'black')) |> 
   add_trace(y = ~Deaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
   layout(xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Number of Death Cases'))
+         yaxis = list(title = 'Number of Death Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 
@@ -186,7 +197,8 @@ Row
 ### Number of Confirmed Dengue Cases by Month [2012-2023]
 
 ```{r}
-# Dengue Cases by year 
+
+# Viz 4: Number of Confirmed Dengue Cases by Month [2012-2023]
 plot_ly(data = dengue_cases, x = ~Months)  |> 
   add_bars(y = ~`2012`, name = '2012') |>
   add_bars(y = ~`2013`, name = '2013') |>
@@ -201,12 +213,17 @@ plot_ly(data = dengue_cases, x = ~Months)  |>
   add_bars(y = ~`2022`, name = '2022') |>
   add_bars(y = ~`2023`, name = '2023') |>
   layout(xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Number of Confirmed Cases'))
+         yaxis = list(title = 'Number of Confirmed Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 ### Number of Dengue Death Cases by Month [2015-2023]
 ```{r}
-# Dengue deaths by year 
+
+# Viz 5: Number of Dengue Death Cases by Month [2015-2023]
 plot_ly(data = dengue_deaths, x = ~Months)  |> 
   add_bars(y = ~`2015`, name = '2015') |>
   add_bars(y = ~`2016`, name = '2016') |>
@@ -218,26 +235,35 @@ plot_ly(data = dengue_deaths, x = ~Months)  |>
   add_bars(y = ~`2022`, name = '2022') |>
   add_bars(y = ~`2023`, name = '2023') |>
   layout(xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Number of Death Cases'))
+         yaxis = list(title = 'Number of Death Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 
 ### Number of Confirmed and Deaths Cases by Year [2012-2023]
 
 ```{r}
-# Create a bar chart to show the yearly sum of cases and deaths
-plot_ly(data = all_years, x = ~Year, y = ~Cases, type = 'bar', name = 'Cases') %>%
-  add_trace(y = ~Deaths, name = 'Deaths') %>%
+# Viz 6: Number of Confirmed and Deaths Cases by Year [2012-2023]
+plot_ly(data = all_years, x = ~Year) %>%
+  add_bars(y = ~Cases, name = 'Cases') |> 
+  add_bars(y = ~Deaths, name = 'Deaths') |> 
   layout(xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Cases'))
+         yaxis = list(title = 'Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
 ```
 
 
-Last Three Years  
-=======================================================================
+Top 3 - Outbreaks 
+===================================================================
 
 Row
------------------------------------------------------------------------
+-------------------------------------------------------------------
 ### Last Three Years Denge Cases by Month
 
 ```{r}
@@ -270,7 +296,7 @@ ggplotly(fig_cases_year)
 
 
 Row
------------------------------------------------------------------------
+-------------------------------------------------------------------
 ### Last Three Years Denge Deaths by Month
 
 ```{r}
@@ -301,11 +327,15 @@ fig_last3_deaths <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalDeaths))+
 ggplotly(fig_last3_deaths)
 ```
 
+Global Situation
+===================================================================
 
+Dengue - Climate Change 
+===================================================================
 
 
 Data
-=======================================================================
+===================================================================
 **Data**
 
 The Dengue Situation Dashboard utilizes data from the official website of the [Directorate General of Health Services (DGHS)](https://old.dghs.gov.bd/index.php/bd/home/5200-daily-dengue-status-report) in Bangladesh, specifically the Daily Dengue Status Report. Developed using the flexdashboard framework, this dashboard provides valuable insights and real-time information about the dengue situation in Bangladesh.
