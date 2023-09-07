@@ -7,9 +7,6 @@ library(viridis)
 library(denguedatahub)
 library(visdat)
 
-theme_set(theme_economist(base_size = 16))
-
-
 # Level of Dengue risk around the world
 level_of_risk
 
@@ -32,6 +29,8 @@ ggplot(tab1, aes(region, count)) +
   scale_fill_brewer(palette = "Dark2")+ 
   theme(legend.position = "top") 
 
+
+ggplotly(p)
 
 # Presence of dengue incidence in 2019
 worlddata2019 <- dplyr::filter(world_annual, year == 2019)
