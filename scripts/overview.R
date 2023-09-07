@@ -22,7 +22,10 @@ daily_data_23$Date <- as.Date(daily_data_23$Date)
 # impute missing values with zero 
 daily_data_23[is.na(daily_data_23)] <- 0
 
-
+# daily_data_23
+daily_data_23 <- daily_data_23 |> 
+  mutate(Month = lubridate::month(Date, label = TRUE),
+         Day = lubridate::day(Date)) 
 
 # transform data into long format for visualizations 
 # cases 
@@ -68,6 +71,29 @@ plot_ly(data = daily_data_23, x = ~Date, type = 'scatter', mode = 'lines+markers
                        xanchor = "center", 
                        x = 0.5, 
                        y= 1))
+
+# Viz 2: Monthly Dengue Cases, Deaths, and Recovered 
+monthly_data_23 <- daily_data_23 |> 
+  group_by(Month) |> 
+  summarise(TotalCase = sum(Cases), 
+            TotalDeaths = sum(Deaths), 
+            TotalRecovered = sum(Recovered))
+
+plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+markers', 
+        name = 'Cases', y = ~TotalCase) |> 
+  add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
+  add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
+  layout(title = "Monthly Dengue Reporting Cases, Deaths, and Recovered in 2023", 
+         xaxis = list(title = 'Date'),
+         yaxis = list(title = 'Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= 1))
+
+
+
+
 
 # Viz 2: Number of Dengue Cases in 2023
 plot_ly(data = data23, x = ~Months)  |> 

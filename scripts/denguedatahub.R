@@ -48,4 +48,16 @@ ggplot(worlddata2019, aes(x = long,
   theme(legend.position = "top") + 
   scale_fill_brewer(palette = "Dark2") 
 
+# Global Dengue Incidence 
+world_annual |> 
+  group_by(year) |> 
+  summarise(Total)
 
+plot_ly(data = world_annual, x = ~year)  |> 
+  add_bars(y = ~incidence, name = 'Dengue Incidence', marker = list(color = "#ff7c43")) |> 
+  layout(title = 'Global Dengue Incidence from ', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Incidence'))
+
+
+world <- world_annual
