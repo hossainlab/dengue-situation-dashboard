@@ -243,20 +243,35 @@ plot_ly(data = dengue_deaths, x = ~Months)  |>
 ```
 
 
-### Number of Confirmed and Deaths Cases by Year [2012-2023]
+### Year-wise Dengue Cases in Bangladesh [2012-2023]
+```{r, include=FALSE}
+year_wise_aggregated <- all_years |> 
+  group_by(Year) |> 
+  summarise(Total_Cases = sum(Cases), 
+            Toal_Deaths = sum(Deaths))
+year_wise_aggregated
+```
 
 ```{r}
-# Viz 6: Number of Confirmed and Deaths Cases by Year [2012-2023]
-plot_ly(data = all_years, x = ~Year) %>%
-  add_bars(y = ~Cases, name = 'Cases') |> 
-  add_bars(y = ~Deaths, name = 'Deaths') |> 
-  layout(xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Cases'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y= 1))
+# Viz 6: Year-wise Dengue Cases in Bangladesh from 2012 to 2023
+plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
+  add_bars(y = ~Total_Cases, name = 'Cases', marker = list(color = "#2f4b7c")) |> 
+  layout(title = 'Year-wise Dengue Cases from 2012 to 2023', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
 ```
+
+### Year-wise Dengue Death Cases in Bangladesh [2015-2023]
+```{r}
+# Viz 7: Year-wise Dengue Cases in Bangladesh from 2015 to 2023
+plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
+  add_bars(y = ~Toal_Deaths, name = 'Cases', marker = list(color = "#ff7c43")) |> 
+  layout(title = 'Year-wise Dengue Death Cases from 2015 to 2023', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
+
+```
+
 
 
 Top 3 - Outbreaks 
