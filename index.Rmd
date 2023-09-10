@@ -268,7 +268,7 @@ all_years_aggregated <- all_years |>
 ```{r}
 # Viz 5: Monthly Total Cases by Month and Year [2012-2023]
 plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalCase, type = 'scatter', 
-        mode = 'lines', color = ~Year) |> 
+        mode = 'lines+markers', color = ~Year) |> 
   layout(title = "Monthly Total Cases by Year from 2012 to 2023",
          xaxis = list(title = "Month"),
          yaxis = list(title = "Total Cases"), 
@@ -278,7 +278,7 @@ plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalCase, type = 'scatte
 ### Number of Dengue Death Cases by Month and Year [2015-2023]
 ```{r}
 # Viz 6: Monthly Total Deaths by Year [2015-2023]
-plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines', color = ~Year) |> 
+plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
   layout(title = "Monthly Total Deaths by Year from 2015 to 2023",
          xaxis = list(title = "Month"),
          yaxis = list(title = "Total Deaths"), 
@@ -348,7 +348,7 @@ top5_outbreaks_year <- all_years |>
 
 ```{r}
 # Top 5 Dengue Outbreaks by Year and Month 
-plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalCases, type = 'scatter', mode = 'lines', color = ~Year) |> 
+plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalCases, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
   layout(title = "Top 5 Dengue Outbreaks Cases by Year and Month",
          xaxis = list(title = "Month"),
          yaxis = list(title = "Total Cases"), 
@@ -374,7 +374,7 @@ Row
 ### Top 5 Dengue Outbreaks Deaths by Month and Year
 
 ```{r}
-plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines', color = ~Year) |> 
+plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
   layout(title = "Monthly Total Death Cases for top 5 Outbreaks",
          xaxis = list(title = "Month"),
          yaxis = list(title = "Total Cases"), 
