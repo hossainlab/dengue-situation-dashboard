@@ -4,7 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: rows
     social: menu
-    source_code: https://github.com/hossainlab/dengue-situation-dashboar
+    source_code: https://github.com/hossainlab/dengue-situation-dashboard
 editor_options: 
   chunk_output_type: console
 ---
@@ -43,6 +43,7 @@ confirmed_color <- "#FF5733"
 active_color <- "#FFD700"
 recovered_color <- "#00FF00"
 death_color <- "#333333"
+cfr_color <- "red"
 ```
 
 ```{r, data}
@@ -102,7 +103,7 @@ data23$Year <- as.factor(data23$Year)
 
 
 
-Overview  
+Outbreak 2023  
 ===================================================================
 
 Row
@@ -125,6 +126,16 @@ valueBox(value = deaths,
          caption = "Total Death Cases in 2023", 
          color = death_color, 
          icon = "fa-exclamation-triangle")
+```
+
+### Case Fatality Rate (CFR) {.value-box}
+```{r}
+cfr <-  round(sum(daily_data_23$Deaths, na.rm = T) / sum(daily_data_23$Cases, na.rm = T) * 100, 2)
+
+valueBox(value = cfr, 
+         caption = "Case Fatality Rate (CFR) in 2023", 
+         color = cfr_color, 
+         icon = "fa-heart-broken")
 ```
 
 
@@ -193,6 +204,9 @@ plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+mark
 ```
 
 
+Row
+-------------------------------------------------------------------
+
 ### Number of Dengue Cases in 2023
 
 ```{r}
@@ -225,6 +239,9 @@ plot_ly(data = data23, x = ~Months) |>
                        y = -0.3))
 ```
 
+Outbreak (2012-2023)
+===================================================================
+
 
 Row
 -----------------------------------------------------------------------
@@ -249,13 +266,15 @@ plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalCase, type = 'scatte
 ### Number of Dengue Death Cases by Month and Year [2015-2023]
 ```{r}
 # Viz 6: Monthly Total Deaths by Year [2015-2023]
-plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', 
-        mode = 'lines', color = ~Year) |> 
+plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines', color = ~Year) |> 
   layout(title = "Monthly Total Deaths by Year from 2015 to 2023",
          xaxis = list(title = "Month"),
          yaxis = list(title = "Total Deaths"), 
          legend = list(title=list(text='<b> Years </b>'))) 
 ```
+
+Row
+-------------------------------------------------------------------
 
 
 ### Year-wise Dengue Cases[2012-2023]
@@ -266,6 +285,7 @@ year_wise_aggregated <- all_years |>
             Toal_Deaths = sum(Deaths))
 year_wise_aggregated
 ```
+
 
 ```{r}
 # Viz 7: Year-wise Dengue Cases in Bangladesh from 2012 to 2023
@@ -289,72 +309,77 @@ plot_ly(data = year_wise_aggregated, x = ~Year)  |>
 
 
 
-Last 3 - Outbreaks 
+Top 5 - Outbreaks 
 ===================================================================
 
 Row
 -------------------------------------------------------------------
-### Last Three Years Dengue Cases by Month
+### Top 5 Dengue Outbreaks Cases by Year and Month 
 
-```{r}
-last3 <- long_cases_data %>% 
-  filter(Year == c(2021, 2022, 2023))
+```{r, include=FALSE}
+# Top 5 outbreaks by month and year in Bangladesh 
+top5_outbreaks_month_year <- all_years |> 
+  group_by(Year, Months) |> 
+  summarise(TotalCases = sum(Cases), 
+            TotalDeaths = sum(Deaths)) |> 
+  filter(Year %in% c(2018, 2019, 2021, 2022, 2023))
+```
 
-fig_cases_month <- ggplot(data = last3, 
-               aes(x = Months, y = Cases, group=Year, color=Year))+
-  geom_line()+
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_cases_month)
+```{r, include=FALSE}
+# Top 5 outbreaks by year in Bangladesh 
+top5_outbreaks_year <- all_years |> 
+  group_by(Year) |> 
+  summarise(TotalCases = sum(Cases), 
+            TotalDeaths = sum(Deaths)) |> 
+  filter(Year %in% c(2018, 2019, 2021, 2022, 2023))
 ```
 
 
-### Last Three Years Dengue Cases by Year [2021-2023]
+```{r}
+# Top 5 Dengue Outbreaks by Year and Month 
+plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalCases, type = 'scatter', mode = 'lines', color = ~Year) |> 
+  layout(title = "Top 5 Dengue Outbreaks Cases by Year and Month",
+         xaxis = list(title = "Month"),
+         yaxis = list(title = "Total Cases"), 
+         legend = list(title=list(text='<b> Years </b>')))
+```
+
+
+### Top 5 Dengue Outbreaks Cases by Year
 
 ```{r}
-last3_sum_df <- long_cases_data %>% 
-  filter(Year == c(2021, 2022, 2023)) %>% 
-  group_by(Year) %>% 
-  summarise(TotalCases = sum(Cases))
+# Year-wise dengue cases 
+plot_ly(data = top5_outbreaks_year, x = ~Year)  |> 
+  add_bars(y = ~TotalCases, name = 'Cases', marker = list(color = "#5ec962")) |> 
+  layout(title = 'Top 5 Dengue Outbreaks Cases by Year', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
 
-fig_cases_year <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalCases))+
-  geom_bar(stat="identity", fill="#d45087")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_cases_year)
 ```
 
 
 Row
 -------------------------------------------------------------------
-### Last Three Years Dengue Deaths by Month
+### Top 5 Dengue Outbreaks Deaths by Month and Year
 
 ```{r}
-last3<- long_deaths_data %>% 
-  filter(Year == c(2021, 2022, 2023))
-
-fig_deaths_month <- ggplot(data = last3, 
-               aes(x = Months, y = Deaths, group=Year, color=Year))+
-  geom_line()+
-  theme_minimal()+ 
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_deaths_month)
+plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines', color = ~Year) |> 
+  layout(title = "Monthly Total Death Cases for top 5 Outbreaks",
+         xaxis = list(title = "Month"),
+         yaxis = list(title = "Total Cases"), 
+         legend = list(title=list(text='<b> Years </b>')))
 ```
 
 
-### Last Three Years Dengue Deaths by Year [2021-2023]
+### Top 5 Dengue Outbreaks Deaths by Year
 
 ```{r}
-last3_sum_df <- long_deaths_data %>% 
-  filter(Year == c(2021, 2022, 2023)) %>% 
-  group_by(Year) %>% 
-  summarise(TotalDeaths = sum(Deaths)) 
-
-fig_last3_deaths <- ggplot(data = last3_sum_df, aes(x = Year, y=TotalDeaths))+
-  geom_bar(stat="identity", fill="#a05195")+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 60, vjust = 0.5, hjust=1))
-ggplotly(fig_last3_deaths)
+# Year-wise dengue cases 
+plot_ly(data = top5_outbreaks_year, x = ~Year)  |> 
+  add_bars(y = ~TotalDeaths, name = 'Cases', marker = list(color = "#21918c")) |> 
+  layout(title = 'Year-wise Dengue Deaths', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
 ```
 
 Global Situation
