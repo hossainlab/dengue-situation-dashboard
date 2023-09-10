@@ -48,22 +48,27 @@ ggplot(worlddata2019, aes(x = long,
   theme(legend.position = "top") + 
   scale_fill_brewer(palette = "Dark2") 
 
-# Global Dengue Incidence 
-world_annual |> 
-  group_by(year) |> 
-  summarise(Total)
-
-plot_ly(data = world_annual, x = ~year)  |> 
-  add_bars(y = ~incidence, name = 'Dengue Incidence', marker = list(color = "#ff7c43")) |> 
-  layout(title = 'Global Dengue Incidence from ', 
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Incidence'))
-
 
 # Global dengue incidence 
 world_dengue <- world_annual
 world_dengue |> 
   group_by(year)
+
+
+world_dengue |> 
+  filter(year %in% 2018:2019) |> 
+  plot_ly(data = world_dengue, x = ~year)  |> 
+  add_bars(y = ~incidence, name = 'Confirmed Cases') |> 
+  add_trace(y = ~incidence, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  layout(title = "Monthly Dengue Cases",
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Confirmed Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= -0.3))
+
+
 
 
 plot_ly(data = world_dengue, x = ~year)  |> 

@@ -10,15 +10,3 @@ library(tmap)
 library(bangladesh)
 
 
-
-country <- get_map("country")
-
-
-
-
-sylhet <- get_divisions(divisions = "Sylhet", level =  "upazila")
-# single division
-ggplot(data = sylhet) +
-  geom_sf() +
-  xlab("")+ ylab("")+
-  theme_minimal()
