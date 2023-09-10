@@ -241,7 +241,7 @@ plot_ly(data = five_years, x = ~Year) |>
   layout(title = "Dengue Case Comparison Last 5 Years (2023 up-to-date)",
          xaxis = list(title = 'Year'),
          yaxis = list(title = 'Cases'),
-         barmode = "stack",
+         barmode = "group",
          legend = list(orientation = "h", 
                        xanchor = "center", 
                        x = 0.5, 
