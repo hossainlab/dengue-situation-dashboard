@@ -113,7 +113,7 @@ Row
 ```{r}
 confirmed <- format(sum(daily_data_23$Cases, na.rm = T), big.mark = ",")
 valueBox(value = confirmed, 
-         caption = "Total Confirmed Cases in 2023", 
+         caption = "Total Confirmed Cases", 
          color = confirmed_color, 
          icon = "fa-virus")
 ```
@@ -123,7 +123,7 @@ valueBox(value = confirmed,
 ```{r}
 deaths <- format(sum(daily_data_23$Deaths, na.rm = T), big.mark = ",")
 valueBox(value = deaths, 
-         caption = "Total Death Cases in 2023", 
+         caption = "Total Death Cases", 
          color = death_color, 
          icon = "fa-exclamation-triangle")
 ```
@@ -133,7 +133,7 @@ valueBox(value = deaths,
 cfr <-  round(sum(daily_data_23$Deaths, na.rm = T) / sum(daily_data_23$Cases, na.rm = T) * 100, 2)
 
 valueBox(value = cfr, 
-         caption = "Case Fatality Rate (CFR) in 2023", 
+         caption = "Case Fatality Rate (CFR)", 
          color = cfr_color, 
          icon = "fa-heart-broken")
 ```
@@ -143,7 +143,7 @@ valueBox(value = cfr,
 ```{r}
 recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
 valueBox(value = recovered, 
-         caption = "Total Recovered Cases in 2023", 
+         caption = "Total Recovered Cases", 
          color = recovered_color, 
          icon = "fa-check-circle")
 ```
@@ -154,7 +154,7 @@ valueBox(value = recovered,
 daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_23$Recovered
 active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
 valueBox(value = active, 
-         caption = "Total Active Cases in 2023", 
+         caption = "Total Active Cases", 
          color = active_color, 
          icon = "fa-skull")
 ```
@@ -162,14 +162,14 @@ valueBox(value = active,
 
 Row
 -----------------------------------------------------------------------
-### Daily Confirmed, Death, and Recovered Cases Over Time in 2023
+### Daily Confirmed, Death, and Recovered Cases
 ```{r}
 # Viz 1: Daily Confirmed, Death, and Recovered Cases Over Time in 2023
 plot_ly(data = daily_data_23, x = ~Date, type = 'scatter', mode = 'lines+markers', 
         name = 'Cases', y = ~Cases) %>%
   add_trace(y = ~Deaths, name = 'Deaths', line = list(color="black")) %>%
   add_trace(y = ~Recovered, name = 'Recovered') %>%
-  layout(title = "Daily Dengue Cases Pattern in 2023", 
+  layout(title = "Daily Dengue Cases", 
          xaxis = list(title = 'Date'),
          yaxis = list(title = 'Cases'), 
          legend = list(orientation = "h", 
@@ -178,7 +178,7 @@ plot_ly(data = daily_data_23, x = ~Date, type = 'scatter', mode = 'lines+markers
                        y = -0.3))
 ```
 
-### Monthly Dengue Cases, Deaths, and Recovered in 2023
+### Monthly Dengue Cases, Deaths, and Recovered
 ```{r, include=FALSE}
 monthly_data_23 <- daily_data_23 |> 
   group_by(Month) |> 
@@ -193,7 +193,7 @@ plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+mark
         name = 'Cases', y = ~TotalCase) |> 
   add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
   add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
-  layout(title = "Monthly Dengue Cases Pattern in 2023", 
+  layout(title = "Monthly Dengue Cases", 
          xaxis = list(title = 'Date'),
          yaxis = list(title = 'Cases'), 
          legend = list(orientation = "h", 
@@ -207,14 +207,14 @@ plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+mark
 Row
 -------------------------------------------------------------------
 
-### Number of Dengue Cases in 2023
+### Number of Dengue Cases
 
 ```{r}
-# Viz 3: Number of Dengue Cases in 2023
+# Viz 3: Number of Dengue Cases
 plot_ly(data = data23, x = ~Months)  |> 
   add_bars(y = ~Cases, name = 'Confirmed Cases') |> 
   add_trace(y = ~Cases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
-  layout(title = "Monthly Dengue Cases in 2023",
+  layout(title = "Monthly Dengue Cases",
          xaxis = list(title = 'Month'),
          yaxis = list(title = 'Number of Confirmed Cases'), 
          legend = list(orientation = "h", 
@@ -224,13 +224,13 @@ plot_ly(data = data23, x = ~Months)  |>
 ```
 
 
-### Number of Death Cases in 2023
+### Number of Death Cases
 ```{r}
 # Viz 4: Number of Death Cases in 2023
 plot_ly(data = data23, x = ~Months) |> 
   add_bars(y = ~Deaths, name = 'Confirmed Deaths', marker = list(color = 'black')) |> 
   add_trace(y = ~Deaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
-  layout(title = "Monthly Dengue Deaths in 2023",
+  layout(title = "Monthly Dengue Deaths",
          xaxis = list(title = 'Month'),
          yaxis = list(title = 'Number of Death Cases'), 
          legend = list(orientation = "h", 
@@ -239,7 +239,7 @@ plot_ly(data = data23, x = ~Months) |>
                        y = -0.3))
 ```
 
-Outbreak (2012-2023)
+All Outbreaks
 ===================================================================
 
 
@@ -275,7 +275,6 @@ plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scat
 
 Row
 -------------------------------------------------------------------
-
 
 ### Year-wise Dengue Cases[2012-2023]
 ```{r, include=FALSE}

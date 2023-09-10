@@ -60,4 +60,25 @@ plot_ly(data = world_annual, x = ~year)  |>
          yaxis = list(title = 'Incidence'))
 
 
-world <- world_annual
+# Global dengue incidence 
+world_dengue <- world_annual
+world_dengue |> 
+  group_by(year)
+
+
+plot_ly(data = world_dengue, x = ~year)  |> 
+  add_bars(y = ~incidence, name = 'Confirmed Cases') |> 
+  add_trace(y = ~incidence, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  layout(title = "Monthly Dengue Cases",
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Number of Confirmed Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= -0.3))
+ 
+# 
+ggplot(data = world_dengue, aes(x = year, y = incidence))+
+  geom_bar()
+
+
