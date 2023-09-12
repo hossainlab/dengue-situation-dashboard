@@ -1,0 +1,8 @@
+Case Fatality {data-navmenu="Comparisons"}
+===================================================================
+
+```{r}
+library(googlesheets4)
+cfr_data <- read_sheet("https://docs.google.com/spreadsheets/d/1f6g7Stprc5moCTQePEYRwbqT5xWDDYZodG4T-HDBSIc/edit?usp=sharing")
+```
+

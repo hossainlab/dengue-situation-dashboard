@@ -4,18 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     logo: img/logo.png
     favicon: img/favicon.png
-    theme:
-      version: 4
-      navbar-bg: "#484848"
-      base_font: 
-        google: Prompt
-      heading_font:
-        google: Sen
-      code_font:
-        google: 
-          # arguments to sass::font_google() 
-          family: JetBrains Mono
-          local: false
+    theme: journal
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboard
@@ -42,10 +31,6 @@ editor_options:
 <!----Page 5: Climate Variables---->
 ```{r child = 'pages/05-climate.Rmd'}
 ```
-
-
-
-
 
 <!----Page 5: Team---->
 
