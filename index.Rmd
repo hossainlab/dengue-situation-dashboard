@@ -4,7 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     logo: img/logo.png
     favicon: img/favicon.png
-    theme: journal
+    theme: flatly
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboard
