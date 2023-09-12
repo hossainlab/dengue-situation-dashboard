@@ -48,8 +48,8 @@ plot_ly(cfr_data, x = ~Year)  |>
 ### Case Fatality Rate (CFR) Over the Years[2015-2023]
 
 ```{r}
- plot_ly(cfr_data, x = ~Year, y = ~CFR, type = 'bar', name = "CFR", marker = list(color = '#758283'))  |> 
-  add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#B9345A')) |> 
+ plot_ly(cfr_data, x = ~Year, y = ~CFR, type = 'bar', name = "CFR", marker = list(color = '#a6bddb'))  |> 
+  add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#1c9099')) |> 
   layout(title = "Case Fatality Rate (CFR) Over the Years",
          xaxis = list(title = "Year"),
          yaxis = list(title = "CFR"))
