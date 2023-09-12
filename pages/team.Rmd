@@ -1,3 +1,13 @@
 Team {data-navmenu="About"}
 ===================================================================
-The Dengue Situation Dashboard utilizes data from the official website of the [Directorate General of Health Services (DGHS)](https://old.dghs.gov.bd/index.php/bd/home/5200-daily-dengue-status-report) in Bangladesh, specifically the Daily Dengue Status Report. Developed using the flexdashboard framework, this dashboard provides valuable insights and real-time information about the dengue situation in Bangladesh.
+We extend our heartfelt gratitude and appreciation to the dedicated team of data collectors whose tireless efforts and commitment have been instrumental in the development and maintenance of this dengue dashboard. Your relentless work in collecting, verifying, and updating critical data related to the dengue situation in Bangladesh has been invaluable.
+
+Your diligence and dedication to gathering accurate and timely information have played a crucial role in making this dashboard a reliable resource for monitoring and responding to the dengue outbreak. Your contributions are a testament to the importance of data in addressing public health challenges.
+
+We recognize the challenges you face in the field, often working under demanding conditions, and your unwavering dedication to the well-being of the community is truly commendable. The data you collect serves as a cornerstone for informed decision-making and effective response efforts.
+
+This dashboard would not have been possible without your hard work and commitment to public health. We thank you for your ongoing efforts and look forward to continuing to work together to tackle the dengue situation and other public health challenges in Bangladesh.
+
+
+
+

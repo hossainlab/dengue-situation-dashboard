@@ -1,0 +1,16 @@
+
+Data Sources {data-navmenu="About"}
+===================================================================
+**Data**
+
+We wish to express our profound appreciation to the Directorate General of Health Services (DGHS) and the Institute of Epidemiology, Disease Control and Research (IEDCR) for their invaluable contributions as the primary data providers for this dengue dashboard.
+
+The reliability and precision of the information presented here are indebted to the unwavering dedication of DGHS and IEDCR in the collection, scrutiny, and dissemination of data concerning the dengue situation in Bangladesh. Their steadfast commitment to public health and their tireless efforts in furnishing current and accurate data have been fundamental in crafting a comprehensive and informative dashboard.
+
+We acknowledge the substantial role played by DGHS and IEDCR in the monitoring and response to health crises, including dengue outbreaks. The data they furnish serve as the bedrock upon which informed decisions and targeted interventions are constructed, ultimately working towards the enhancement of public health in our nation.
+
+We are profoundly grateful for the enduring partnership and cooperation with DGHS and IEDCR, and we eagerly anticipate our continued collaboration in addressing the dengue situation and other health challenges affecting our community.
+
+Once more, we extend our gratitude to DGHS and IEDCR for their indispensable support in this initiative.
+
+

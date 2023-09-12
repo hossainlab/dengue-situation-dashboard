@@ -1,0 +1,10 @@
+Acknowledgement {data-navmenu="About"}
+===================================================================
+We would like to extend our heartfelt gratitude to [CHIRAL Bangladesh](https://chiralbd.org/) for their unwavering support in monitoring and managing the dengue situation in Bangladesh. Their invaluable contributions have been instrumental in the development and maintenance of this dashboard, which serves as a vital tool in tracking and responding to the dengue outbreak.
+
+CHIRAL Bangladesh's dedication to public health and their tireless efforts in collecting and analyzing data have played a pivotal role in ensuring the accuracy and effectiveness of this dashboard. Their commitment to the well-being of the community is truly commendable, and we are immensely grateful for their collaboration and partnership in addressing the dengue crisis.
+
+This dashboard stands as a testament to the power of collaboration and the positive impact that can be achieved when organizations like CHIRAL Bangladesh come together with a shared mission. We look forward to continuing our partnership in the fight against dengue and other public health challenges, working together to safeguard the health and well-being of the people of Bangladesh.
+
+Once again, thank you, CHIRAL Bangladesh, for your unwavering support and dedication to improving public health in our country.
+

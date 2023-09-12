@@ -36,34 +36,17 @@ editor_options:
 ```{r child = 'pages/cfr.Rmd'}
 ```
 
-
-
 <!----Page 5: Team---->
 
+
+<!----About---->
 ```{r child = 'pages/team.Rmd'}
 ```
 
+```{r child = 'pages/acknowledgement.Rmd'}
+```
 
-Data {data-navmenu="About"}
-===================================================================
-**Data**
-
-The Dengue Situation Dashboard utilizes data from the official website of the [Directorate General of Health Services (DGHS)](https://old.dghs.gov.bd/index.php/bd/home/5200-daily-dengue-status-report) in Bangladesh, specifically the Daily Dengue Status Report. Developed using the flexdashboard framework, this dashboard provides valuable insights and real-time information about the dengue situation in Bangladesh.
-
-The dashboard presents a user-friendly interface that allows users to access and visualize the latest data related to dengue cases, deaths, and affected areas in the country. By incorporating the data from the DGHS, the dashboard ensures the reliability and accuracy of the information presented.
-
-Through interactive charts, graphs, and maps, the dashboard highlights key statistics, trends, and patterns related to dengue cases. Users can explore the data by region, district, or specific time periods, gaining a comprehensive understanding of the dengue situation at various levels.
-
-The dashboard offers a range of visualizations, including line charts displaying the daily or weekly trend of dengue cases, bar charts showcasing the distribution of cases across different districts, and choropleth maps indicating the severity of dengue outbreaks in different regions of Bangladesh. These visual representations help stakeholders and decision-makers to identify high-risk areas, monitor the progression of the disease, and allocate resources effectively.
-
-
-Furthermore, the Dengue Situation Dashboard allows users to compare current data with historical data, enabling them to assess the impact of control measures and interventions. This feature assists in evaluating the effectiveness of strategies implemented to mitigate the dengue outbreak.
-
-By providing real-time updates and an intuitive interface, the Dengue Situation Dashboard based on the DGHS data ensures that stakeholders, including health officials, researchers, and the public, have access to reliable and up-to-date information. This empowers them to make informed decisions, implement targeted interventions, and raise awareness about dengue prevention and control measures.
-
-Overall, the Dengue Situation Dashboard based on the DGHS data and developed using flexdashboard is a valuable tool that enhances the understanding of the dengue situation in Bangladesh. By leveraging the power of data visualization and real-time information, this dashboard supports evidence-based decision-making and facilitates effective response measures to combat dengue outbreaks in the country.
-
-
-
+```{r child = 'pages/data-sources.Rmd'}
+```
 
 
