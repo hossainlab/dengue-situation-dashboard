@@ -1,26 +1,16 @@
 library(tidyverse)
-library(easystats)
-library(plotly)
 library(raster)
 library(geodata)
+library(RColorBrewer)
 
-# data 
-climate_data <- readxl::read_excel(here::here("data/Climate_Variables_Dengue.xlsx"))
-climate_data <- climate_data |> mutate(Month = factor(Month, levels = month.name))
+min_val <- 4.943266 
+max_val <- 17.502493 
 
-
-
-ggplot(climate_data, aes(x = Month)) +
-  geom_line(aes(y = TMIN, color = "Min. Temperature (C)"))
+file <- raster(here::here("climate_data/precp.tif"))
+summary(file)
 
 
-plot_ly(data = climate_data, x = ~Month) |> 
-  add_trace(y = ~TMIN, name = "Min. Temperature (C)",  type = 'scatter', mode = 'lines+markers') |> 
-  add_trace(y = ~TMAX, name = "Max. Temperature (C)",  type = 'scatter', mode = 'lines+markers') |> 
-  add_trace(y = ~Rainfall, name = "Rainfall (mm)",  type = 'scatter', mode = 'lines+markers') |> 
-  add_trace(y = ~Humidity, name = "Humidity (%)",  type = 'scatter', mode = 'lines+markers') |> 
-  add_trace(y = ~DengueCases, name = "Dengue Cases",  type = 'scatter', mode = 'lines+markers')
+mean(file)
 
 
-
-
+plot(file, at = seq(min_val, max_val, length.out = 11))

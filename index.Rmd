@@ -17,6 +17,7 @@ library(readxl)
 library(sjPlot)
 library(viridis)
 library(rio)
+library(googlesheets4)
 library(viridis)
 library(denguedatahub)
 library(visdat)
@@ -48,12 +49,15 @@ cfr_color <- "red"
 
 ```{r, data}
 # cases data 
-dengue_cases <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 1)
+dengue_cases <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
+                           range = "Cases")
 dengue_cases <- dengue_cases |> mutate(Months = factor(Months, levels = month.name)) 
 
 # deaths data 
-dengue_deaths <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 2)
+dengue_deaths <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
+                            range = "Deaths")
 dengue_deaths <- dengue_deaths |> mutate(Months = factor(Months, levels = month.name)) 
+
 
 # daily data for 2023 
 daily_data_23 <- import_list(here::here("data/DengueCases2023.xlsx"),
@@ -546,30 +550,6 @@ By providing real-time updates and an intuitive interface, the Dengue Situation 
 
 Overall, the Dengue Situation Dashboard based on the DGHS data and developed using flexdashboard is a valuable tool that enhances the understanding of the dengue situation in Bangladesh. By leveraging the power of data visualization and real-time information, this dashboard supports evidence-based decision-making and facilitates effective response measures to combat dengue outbreaks in the country.
 
-
-Dengue - Bangladesh
-=======================================================================
-**Outbreak at a glance** 
-
-As of 20 November 2022, a total of 52 807 laboratory-confirmed dengue cases and 230 related deaths have been reported by the Ministry of Health & Family Welfare of Bangladesh since 1 January 2022 with a case fatality rate (CFR) of 0.44%. Dengue is endemic in Bangladesh however a surge of cases started in June 2022. Currently, all eight divisions in the country are reporting cases and deaths. This is the second-largest outbreak since 2000, with the largest having occurred in 2019. The current dengue outbreak is unusual in its scale and seasonality.
-
-**Description of the outbreak**
-
-Between 1 January and 20 November 2022, a total of 52 807 dengue cases including 230 related deaths (case fatality rate = 0.44%) were reported by the Ministry of Health & Family Welfare (MOHFW) (Figure 1). The cases were confirmed either by non-structural protein (NS1) diagnostic kits or by Immunoglobulin M (IgM) tests. According to information available for 40% of reported cases (n=20 982) the median age is 25 years (range: 0 – 89) with males accounting for 60% of the cases. This is the second highest annual number of cases since 2000, the highest having occurred in 2019, when 101 354 cases including 164 deaths were reported (Figure 2 & 3).
-
-The most affected division is Dhaka, accounting for 70.6% of cases and 60.4% of deaths. Dhaka city, the largest city in Bangladesh, located in Dhaka division, has reported 64.5% (n= 34 071) of the total number of cases. Other affected divisions include Chattogram division (13.2% of cases and 24.8% of deaths) and Khulna division (5.5% of cases and 4.8% of deaths) (Figure 4).
-
-The high incidence of dengue cases this year is taking place in the context of an unusual amount of rainfall since June 2022, accompanied by high temperatures and high humidity which have resulted in an increased mosquito population throughout Bangladesh.
-
-Source: https://www.who.int/emergencies/disease-outbreak-news/item/2022-DON424
-
-
-
-About  
-=======================================================================
-**Author**
-
-[Md. Jubayer Hossain](https://hossainlab.github.io/) is the Founder, Management Lead and Data Analyst at CHIRAL Bangladesh. CHIRAL Bangladesh is a non-profit organization dedicated to health research to improve lives in Bangladesh. He aspires to maximize the quality of life of people around him by working at the intersection of education, technology, and health research. His research interests include public health, health data science, remote sensing, GIS applications in health,  and machine learning in healthcare. He has been teaching programming, data analysis, data science, and research methodology since 2020 in CHIRAL Bangladesh. Detailed research and teaching activities were found on his [website.](https://hossainlab.github.io/)  
 
 
 

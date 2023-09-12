@@ -2,17 +2,30 @@
 library(tidyverse)
 library(plotly)
 library(readxl)
+library(googlesheets4)
 library(rio)
 
 # cases data 
-dengue_cases <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 1)
+dengue_cases <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
+                           range = "Cases")
 dengue_cases <- dengue_cases |> mutate(Months = factor(Months, levels = month.name)) 
 
 # deaths data 
-dengue_deaths <- read_excel(here::here("data/DengueCaseReporting[2012-23].xlsx"),sheet = 2)
+dengue_deaths <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
+                            range = "Deaths")
 dengue_deaths <- dengue_deaths |> mutate(Months = factor(Months, levels = month.name)) 
 
 # daily data for 2023 
+sheet_links <- "https://docs.google.com/spreadsheets/d/1QgYLR4FW0f9MxiH0GDZm2_5tZOdAlLZAKT4-8Tz9rwQ/edit?usp=sharing"
+
+sheet_links |> 
+  sheet_names() |> 
+  set_names() |> 
+  map_df(read_sheet, ss = sheet_links, .id = "Cut")
+
+daily_data_23 <- sheets_sheets("https://docs.google.com/spreadsheets/d/1QgYLR4FW0f9MxiH0GDZm2_5tZOdAlLZAKT4-8Tz9rwQ/edit?usp=sharing")
+
+
 daily_data_23 <- import_list(here::here("data/DengueCases2023.xlsx"),
                              setclass = "data.table", 
                              rbind_label = "file", 
