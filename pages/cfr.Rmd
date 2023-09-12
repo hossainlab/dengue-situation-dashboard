@@ -11,7 +11,7 @@ library(googlesheets4)
 library(DT)
 library(plotly)
 cfr_data <- read_sheet("https://docs.google.com/spreadsheets/d/1f6g7Stprc5moCTQePEYRwbqT5xWDDYZodG4T-HDBSIc/edit?usp=sharing")
-datatable(head(cfr_data), 
+datatable(cfr_data, 
           caption = htmltools::tags$caption(
           style = 'caption-side: bottom; text-align: center;',
     'Table 1: ', htmltools::em('Dengue cases, deaths, and case fatality rate in Bangladesh')
