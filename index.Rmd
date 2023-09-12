@@ -32,6 +32,12 @@ editor_options:
 ```{r child = 'pages/05-climate.Rmd'}
 ```
 
+<!----Page 5: Climate Variables---->
+```{r child = 'pages/cfr.Rmd'}
+```
+
+
+
 <!----Page 5: Team---->
 
 ```{r child = 'pages/team.Rmd'}

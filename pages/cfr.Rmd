@@ -1,8 +1,58 @@
-Case Fatality {data-navmenu="Comparisons"}
+Case Fatality Rate {data-navmenu="Comparisons"}
 ===================================================================
+
+Row
+-------------------------------------------------------------------
+
+### Case Fatality Rate (CFR) in Bangladesh [2015-2023]
 
 ```{r}
 library(googlesheets4)
+library(DT)
+library(plotly)
 cfr_data <- read_sheet("https://docs.google.com/spreadsheets/d/1f6g7Stprc5moCTQePEYRwbqT5xWDDYZodG4T-HDBSIc/edit?usp=sharing")
+datatable(head(cfr_data), 
+          caption = htmltools::tags$caption(
+          style = 'caption-side: bottom; text-align: center;',
+    'Table 1: ', htmltools::em('Dengue cases, deaths, and case fatality rate in Bangladesh')
+  ))
 ```
+
+
+### Dengue Cases Over the Years[2015-2023]
+
+```{r}
+# Create a line chart for Cases and Deaths
+plot_ly(cfr_data, x = ~Year)  |> 
+  add_lines(y = ~Cases, name = "Cases", type = 'scatter', mode = 'lines+markers', line = list(color = 'blue')) |> 
+  layout(title = "Dengue Cases Over the Years",
+         xaxis = list(title = "Year"),
+         yaxis = list(title = "Count"))
+```
+Row
+-------------------------------------------------------------------
+
+
+### Dengue Deaths Over the Years[2015-2023]
+
+```{r}
+# Create a line chart for Cases and Deaths
+plot_ly(cfr_data, x = ~Year)  |> 
+  add_lines(y = ~Deaths, name = "Deaths", type = 'scatter', mode = 'lines+markers', line = list(color = '#B4161B')) |> 
+  layout(title = "Dengue Deaths Over the Years",
+         xaxis = list(title = "Year"),
+         yaxis = list(title = "Count"))
+```
+
+
+### Case Fatality Rate (CFR) Over the Years[2015-2023]
+
+```{r}
+ plot_ly(cfr_data, x = ~Year, y = ~CFR, type = 'bar', name = "CFR", marker = list(color = '#758283'))  |> 
+  add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#B9345A')) |> 
+  layout(title = "Case Fatality Rate (CFR) Over the Years",
+         xaxis = list(title = "Year"),
+         yaxis = list(title = "CFR"))
+```
+
 
