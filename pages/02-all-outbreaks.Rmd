@@ -1,0 +1,68 @@
+
+All Outbreaks{data-navmenu="Comparisons"}
+===================================================================
+
+
+Row
+-----------------------------------------------------------------------
+### Number of Confirmed Dengue Cases by Month and Year [2012-2023]
+```{r, include=FALSE}
+all_years_aggregated <- all_years |> 
+  group_by(Year, Months) |> 
+  summarise(TotalCase = sum(Cases), 
+            TotalDeaths = sum(Deaths))
+```
+
+```{r}
+# Viz 5: Monthly Total Cases by Month and Year [2012-2023]
+plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalCase, type = 'scatter', 
+        mode = 'lines+markers', color = ~Year) |> 
+  layout(title = "Monthly Total Cases by Year from 2012 to 2023",
+         xaxis = list(title = "Month"),
+         yaxis = list(title = "Total Cases"), 
+         legend = list(title=list(text='<b> Years </b>'))) 
+```
+
+### Number of Dengue Death Cases by Month and Year [2015-2023]
+```{r}
+# Viz 6: Monthly Total Deaths by Year [2015-2023]
+plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
+  layout(title = "Monthly Total Deaths by Year from 2015 to 2023",
+         xaxis = list(title = "Month"),
+         yaxis = list(title = "Total Deaths"), 
+         legend = list(title=list(text='<b> Years </b>'))) 
+```
+
+Row
+-------------------------------------------------------------------
+
+### Year-wise Dengue Cases[2012-2023]
+```{r, include=FALSE}
+year_wise_aggregated <- all_years |> 
+  group_by(Year) |> 
+  summarise(Total_Cases = sum(Cases), 
+            Toal_Deaths = sum(Deaths))
+year_wise_aggregated
+```
+
+
+```{r}
+# Viz 7: Year-wise Dengue Cases in Bangladesh from 2012 to 2023
+plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
+  add_bars(y = ~Total_Cases, name = 'Cases', marker = list(color = "#2f4b7c")) |> 
+  layout(title = 'Year-wise Dengue Cases from 2012 to 2023', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Deaths'))
+```
+
+### Year-wise Dengue Death Cases [2015-2023]
+```{r}
+# Viz 8: Year-wise Dengue Cases in Bangladesh from 2015 to 2023
+plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
+  add_bars(y = ~Toal_Deaths, name = 'Cases', marker = list(color = "#ff7c43")) |> 
+  layout(title = 'Year-wise Dengue Death Cases from 2015 to 2023', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
+
+```
+

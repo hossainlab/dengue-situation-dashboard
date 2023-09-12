@@ -2,6 +2,20 @@
 title: "Dengue Situation in Bangladesh"
 output: 
   flexdashboard::flex_dashboard:
+    logo: img/logo.png
+    favicon: img/favicon.png
+    theme:
+      version: 4
+      navbar-bg: "#484848"
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+      code_font:
+        google: 
+          # arguments to sass::font_google() 
+          family: JetBrains Mono
+          local: false
     orientation: rows
     social: menu
     source_code: https://github.com/hossainlab/dengue-situation-dashboard
@@ -9,529 +23,37 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r setup, include=FALSE, warning=FALSE, message=FALSE}
-# dashboard 
-library(flexdashboard)
-library(tidyverse)
-library(readxl)
-library(sjPlot)
-library(viridis)
-library(rio)
-library(googlesheets4)
-library(viridis)
-library(denguedatahub)
-library(visdat)
-
-# Maps and Plots
-library(plotly)
-library(leaflet)
-library(leafpop)
-library(RColorBrewer)
-
-# Dates
-library(lubridate) 
-
-## For displaying tables
-library(DT)
-library(readxl)
-
-theme_set(theme_classic())
+<!----Page 1: Overview---->
+```{r child = 'pages/01-overview.Rmd'}
 ```
 
-
-```{r, colors, include=FALSE}
-confirmed_color <- "#FF5733"
-active_color <- "#FFD700"
-recovered_color <- "#00FF00"
-death_color <- "#333333"
-cfr_color <- "red"
+<!----Page 2: All Outbreaks---->
+```{r child = 'pages/02-all-outbreaks.Rmd'}
 ```
 
-```{r, data}
-# cases data 
-dengue_cases <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
-                           range = "Cases")
-dengue_cases <- dengue_cases |> mutate(Months = factor(Months, levels = month.name)) 
-
-# deaths data 
-dengue_deaths <- read_sheet("https://docs.google.com/spreadsheets/d/1tqaroRwF40Q6jlaI_aFxAPAgj0yLhFXfua2gzdaZ270/edit?usp=sharing", 
-                            range = "Deaths")
-dengue_deaths <- dengue_deaths |> mutate(Months = factor(Months, levels = month.name)) 
-
-
-# daily data for 2023 
-daily_data_23 <- import_list(here::here("data/DengueCases2023.xlsx"),
-                             setclass = "data.table", 
-                             rbind_label = "file", 
-                             rbind = TRUE)
-# convert into date format 
-daily_data_23$Date <- as.Date(daily_data_23$Date)
-# impute missing values with zero 
-daily_data_23[is.na(daily_data_23)] <- 0
-
-# daily_data_23
-daily_data_23 <- daily_data_23 |> 
-  mutate(Month = lubridate::month(Date, label = TRUE),
-         Day = lubridate::day(Date)) 
-
-# transform data into long format for visualizations 
-# cases 
-long_cases_data <- dengue_cases |> 
-  pivot_longer(cols = 2:13, names_to = "Year", values_to = "Cases") |> 
-  mutate(Months = factor(Months, levels = month.name)) 
-
-# deaths 
-long_deaths_data <- dengue_deaths |> 
-  pivot_longer(cols = 2:10, names_to = "Year", values_to = "Deaths") |> 
-  mutate(Months = factor(Months, levels = month.name)) 
-
-
-# join data 
-all_years <- left_join(long_cases_data, long_deaths_data, 
-                       by = c("Months", "Year"))
-all_years$Year <- as.factor(all_years$Year)
-
-# Monthly dengue cases for 2023 
-long_cases_data_23 <- long_cases_data|> 
-  filter(Year == 2023)
-
-long_deaths_data_23 <- long_deaths_data|> 
-  filter(Year == 2023)
-
-# join data for monthly cases 
-data23 <- left_join(long_cases_data_23, long_deaths_data_23, 
-                    by = c("Months", "Year"))
-
-data23$Year <- as.factor(data23$Year)
+<!----Page 3: Top 5 Outbreaks---->
+```{r child = 'pages/03-top5-outbreaks.Rmd'}
 ```
 
-
-
-Outbreak 2023  
-===================================================================
-
-Row
--------------------------------------------------------------------
-### Confirmed Cases {.value-box}
-
-```{r}
-confirmed <- format(sum(daily_data_23$Cases, na.rm = T), big.mark = ",")
-valueBox(value = confirmed, 
-         caption = "Total Confirmed Cases in 2023", 
-         color = confirmed_color, 
-         icon = "fa-virus")
+<!----Page 4: Global Situation---->
+```{r child = 'pages/04-global.Rmd'}
 ```
 
-
-### Confirmed Deaths {.value-box}
-```{r}
-deaths <- format(sum(daily_data_23$Deaths, na.rm = T), big.mark = ",")
-valueBox(value = deaths, 
-         caption = "Total Death Cases in 2023", 
-         color = death_color, 
-         icon = "fa-exclamation-triangle")
-```
-
-### Case Fatality Rate (CFR) {.value-box}
-```{r}
-cfr <-  round(sum(daily_data_23$Deaths, na.rm = T) / sum(daily_data_23$Cases, na.rm = T) * 100, 2)
-
-valueBox(value = cfr, 
-         caption = "Case Fatality Rate (CFR) in 2023", 
-         color = cfr_color, 
-         icon = "fa-heart-broken")
-```
-
-
-### Recovered Cases {.value-box}
-```{r}
-recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
-valueBox(value = recovered, 
-         caption = "Total Recovered Cases in 2023", 
-         color = recovered_color, 
-         icon = "fa-check-circle")
-```
-
-
-### Active Cases {.value-box}
-```{r}
-daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_23$Recovered
-active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
-valueBox(value = active, 
-         caption = "Total Active Cases in 2023", 
-         color = active_color, 
-         icon = "fa-skull")
-```
-
-
-Row
------------------------------------------------------------------------
-### Monthly Dengue Cases, Deaths, and Recovered in 2023
-```{r, include=FALSE}
-monthly_data_23 <- daily_data_23 |> 
-  group_by(Month) |> 
-  summarise(TotalCases = sum(Cases), 
-            TotalDeaths = sum(Deaths), 
-            TotalRecovered = sum(Recovered))
-```
-
-```{r}
-# Viz 1: Monthly Dengue Cases, Deaths, and Recovered 
-plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+markers', 
-        name = 'Cases', y = ~TotalCases) |> 
-  add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
-  add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
-  layout(title = " Monthly Trends: Dengue Cases, Deaths, and Recoveries", 
-         xaxis = list(title = 'Date'),
-         yaxis = list(title = 'Cases'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y= -0.3))
-
-```
-
-
-
-### Number of Dengue Cases by Month in 2023
-
-```{r}
-# Viz 2: Number of Dengue Cases
-plot_ly(data = data23, x = ~Months)  |> 
-  add_bars(y = ~Cases, name = 'Confirmed Cases') |> 
-  add_trace(y = ~Cases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
-  layout(title = "Monthly Dengue Cases",
-         xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Confirmed Cases'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y= -0.3))
-```
-
-### Number of Death Cases by Month in 2023
-```{r}
-# Viz 3: Number of Death Cases in 2023
-plot_ly(data = data23, x = ~Months) |> 
-  add_bars(y = ~Deaths, name = 'Confirmed Deaths', marker = list(color = 'black')) |> 
-  add_trace(y = ~Deaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
-  layout(title = "Monthly Dengue Deaths",
-         xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Death Cases'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y = -0.3))
-```
-
-
-Row
--------------------------------------------------------------------
-```{r, include=FALSE}
-# Five years comparison 
-five_years <- all_years |> 
-  filter(Year %in% c(2018, 2019, 2020, 2021, 2022, 2023)) |> 
-  group_by(Year) |> 
-  summarise(TotalCases = sum(Cases), 
-            TotalDeaths = sum(Deaths))
-```
-
-### Dengue Case Comparison Last 5 Years (2023 up-to-date)
-
-```{r}
-plot_ly(data = five_years, x = ~Year, type = 'scatter', mode = 'lines+markers', 
-        name = 'Cases', y = ~TotalCases) |> 
-  add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
-  layout(title = "A 5-Year Trend Comparison (2023 up-to-date)", 
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Cases'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y= -0.3))
-```
-
-### Dengue Case Comparison Last 5 Years (2023 up-to-date)
-
-```{r}
-# Viz 4: Dengue Case Comparison Last 5 Years (2023 up-to-date)
-plot_ly(data = five_years, x = ~Year) |> 
-  add_bars(y = ~TotalCases, name = 'Confirmed Cases', marker = list(color = '#3b528b')) |> 
-  layout(title = "Dengue Case Comparison Last 5 Years (2023 up-to-date)",
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Cases'),
-         barmode = "group",
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y = -0.3))
-```
-
-### Dengue Death Comparison Last 5 Years (2023 up-to-date)
-
-```{r}
-# Viz 4: Dengue Case Comparison Last 5 Years (2023 up-to-date)
-plot_ly(data = five_years, x = ~Year) |> 
-  add_bars(y = ~TotalDeaths, name = 'Confirmed Deaths', marker = list(color = '#440154')) |> 
-  layout(title = "Dengue Deaths Comparison Last 5 Years (2023 up-to-date)",
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Cases'),
-         barmode = "group",
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y = -0.3))
-```
-
-
-All Outbreaks
-===================================================================
-
-
-Row
------------------------------------------------------------------------
-### Number of Confirmed Dengue Cases by Month and Year [2012-2023]
-```{r, include=FALSE}
-all_years_aggregated <- all_years |> 
-  group_by(Year, Months) |> 
-  summarise(TotalCase = sum(Cases), 
-            TotalDeaths = sum(Deaths))
-```
-
-```{r}
-# Viz 5: Monthly Total Cases by Month and Year [2012-2023]
-plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalCase, type = 'scatter', 
-        mode = 'lines+markers', color = ~Year) |> 
-  layout(title = "Monthly Total Cases by Year from 2012 to 2023",
-         xaxis = list(title = "Month"),
-         yaxis = list(title = "Total Cases"), 
-         legend = list(title=list(text='<b> Years </b>'))) 
-```
-
-### Number of Dengue Death Cases by Month and Year [2015-2023]
-```{r}
-# Viz 6: Monthly Total Deaths by Year [2015-2023]
-plot_ly(data = all_years_aggregated, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
-  layout(title = "Monthly Total Deaths by Year from 2015 to 2023",
-         xaxis = list(title = "Month"),
-         yaxis = list(title = "Total Deaths"), 
-         legend = list(title=list(text='<b> Years </b>'))) 
-```
-
-Row
--------------------------------------------------------------------
-
-### Year-wise Dengue Cases[2012-2023]
-```{r, include=FALSE}
-year_wise_aggregated <- all_years |> 
-  group_by(Year) |> 
-  summarise(Total_Cases = sum(Cases), 
-            Toal_Deaths = sum(Deaths))
-year_wise_aggregated
-```
-
-
-```{r}
-# Viz 7: Year-wise Dengue Cases in Bangladesh from 2012 to 2023
-plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
-  add_bars(y = ~Total_Cases, name = 'Cases', marker = list(color = "#2f4b7c")) |> 
-  layout(title = 'Year-wise Dengue Cases from 2012 to 2023', 
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Number of Deaths'))
-```
-
-### Year-wise Dengue Death Cases [2015-2023]
-```{r}
-# Viz 8: Year-wise Dengue Cases in Bangladesh from 2015 to 2023
-plot_ly(data = year_wise_aggregated, x = ~Year)  |> 
-  add_bars(y = ~Toal_Deaths, name = 'Cases', marker = list(color = "#ff7c43")) |> 
-  layout(title = 'Year-wise Dengue Death Cases from 2015 to 2023', 
-         xaxis = list(title = 'Year'),
-         yaxis = list(title = 'Number of Cases'))
-
-```
-
-
-
-Top 5 - Outbreaks 
-===================================================================
-
-Row
--------------------------------------------------------------------
-### Top 5 Dengue Outbreaks Cases by Year and Month 
-
-```{r, include=FALSE}
-# Top 5 outbreaks by month and year in Bangladesh 
-top5_outbreaks_month_year <- all_years |> 
-  group_by(Year, Months) |> 
-  summarise(TotalCases = sum(Cases), 
-            TotalDeaths = sum(Deaths)) |> 
-  filter(Year %in% c(2018, 2019, 2021, 2022, 2023))
-```
-
-```{r, include=FALSE}
-# Top 5 outbreaks by year in Bangladesh 
-top5_outbreaks_year <- all_years |> 
-  group_by(Year) |> 
-  summarise(TotalCases = sum(Cases), 
-            TotalDeaths = sum(Deaths)) |> 
-  filter(Year %in% c(2018, 2019, 2021, 2022, 2023))
-```
-
-
-```{r}
-# Top 5 Dengue Outbreaks by Year and Month 
-plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalCases, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
-  layout(title = "Top 5 Dengue Outbreaks Cases by Year and Month",
-         xaxis = list(title = "Month"),
-         yaxis = list(title = "Total Cases"), 
-         legend = list(title=list(text='<b> Years </b>')))
-```
-
-
-### Top 5 Dengue Outbreaks Cases by Year
-
-```{r}
-# Year-wise dengue cases 
-plot_ly(data = top5_outbreaks_year, x = ~Year)  |> 
-  add_bars(y = ~TotalCases, name = 'Cases', marker = list(color = "#5ec962")) |> 
-  layout(title = 'Top 5 Dengue Outbreaks Cases by Year', 
-         xaxis = list(title = 'Year', categoryorder = "trace"),
-         yaxis = list(title = 'Number of Cases'))
-
-```
-
-
-Row
--------------------------------------------------------------------
-### Top 5 Dengue Outbreaks Deaths by Month and Year
-
-```{r}
-plot_ly(data = top5_outbreaks_month_year, x = ~Months, y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', color = ~Year) |> 
-  layout(title = "Monthly Total Death Cases for top 5 Outbreaks",
-         xaxis = list(title = "Month"),
-         yaxis = list(title = "Total Cases"), 
-         legend = list(title=list(text='<b> Years </b>')))
-```
-
-
-### Top 5 Dengue Outbreaks Deaths by Year
-
-```{r}
-# Year-wise dengue cases 
-plot_ly(data = top5_outbreaks_year, x = ~Year)  |> 
-  add_bars(y = ~TotalDeaths, name = 'Cases', marker = list(color = "#21918c")) |> 
-  layout(title = 'Year-wise Dengue Deaths', 
-         xaxis = list(title = 'Year', categoryorder = "trace"),
-         yaxis = list(title = 'Number of Death Cases'))
-```
-
-Global Situation
-===================================================================
-
-Row
--------------------------------------------------------------------
-### Level of Dengue Risk around the Globe 
-
-```{r, include=FALSE}
-tab1 <- level_of_risk %>% group_by(region, level_of_risk) %>%
-  summarise(count = n(), .groups = 'drop') 
-knitr::kable(tab1)
-
-```
-
-```{r}
-# Summarize and Visualize level_of_riskdata
-p1 <- ggplot(tab1, aes(region, count)) + 
-  geom_bar(aes(fill = level_of_risk), stat = "identity", position = "dodge")+
-  labs(title = "Level of Dengue risk around the world",
-       subtitle = "The level of risk in the context of dengue refers to the likelihood of dengue outbreaks happening in various regions worldwide.", 
-       x = "Region",
-       y = "Number of countries", 
-       caption = "by Jubayer Hossain, Data Source: denguedatahub")+ 
-  guides(fill = guide_legend(title = "Level of Risk"))+
-  scale_fill_brewer(palette = "Dark2")+ 
-  theme(legend.position = "top") 
-ggplotly(p1)
-```
-
-### Presence of Dengue Incidence in 2017
-```{r}
-# Presence of dengue incidence in 2019
-worlddata2019 <- dplyr::filter(world_annual, year == 2017)
-p2 <- ggplot(worlddata2019, aes(x = long,
-                          y = lat,
-                          group=group,
-                          fill = dengue.present)) +
-  geom_polygon(color = "black") +
-  labs(title = "Presence of dengue incidence in 2017", 
-       subtitle = "Dengue Incidence in 2017: A Global Health Challenge", 
-       x = "Longitude",
-       y = "Latitude", 
-       caption = "by Jubayer Hossain, Data Source: denguedatahub") +
-  guides(fill = guide_legend(title = "Dengue Present?"))+
-  theme(legend.position = "top") + 
-  scale_fill_brewer(palette = "Set2") 
-
-ggplotly(p2)
-```
-
-Row
--------------------------------------------------------------------
-### Presence of Dengue Incidence in 2018
-```{r}
-# Presence of dengue incidence in 2019
-worlddata2019 <- dplyr::filter(world_annual, year == 2018)
-p3 <- ggplot(worlddata2019, aes(x = long,
-                          y = lat,
-                          group=group,
-                          fill = dengue.present)) +
-  geom_polygon(color = "black") +
-  labs(title = "Presence of dengue incidence in 2018", 
-       subtitle = "Dengue Incidence in 2018: A Global Health Challenge", 
-       x = "Longitude",
-       y = "Latitude", 
-       caption = "by Jubayer Hossain, Data Source: denguedatahub") +
-  guides(fill = guide_legend(title = "Dengue Present?"))+
-  theme(legend.position = "top") + 
-  scale_fill_brewer(palette = "Set1") 
-
-ggplotly(p3)
-```
-
-
-### Presence of Dengue Incidence in 2019
-```{r}
-# Presence of dengue incidence in 2019
-worlddata2019 <- dplyr::filter(world_annual, year == 2019)
-p4 <- ggplot(worlddata2019, aes(x = long,
-                          y = lat,
-                          group=group,
-                          fill = dengue.present)) +
-  geom_polygon(color = "black") +
-  labs(title = "Presence of dengue incidence in 2019", 
-       subtitle = "Dengue Incidence in 2019: A Global Health Challenge", 
-       x = "Longitude",
-       y = "Latitude", 
-       caption = "by Jubayer Hossain, Data Source: denguedatahub") +
-  guides(fill = guide_legend(title = "Dengue Present?"))+
-  theme(legend.position = "top") + 
-  scale_fill_brewer(palette = "Greens") 
-
-ggplotly(p4)
+<!----Page 5: Climate Variables---->
+```{r child = 'pages/05-climate.Rmd'}
 ```
 
 
 
 
-Dengue - Climate Change 
-===================================================================
 
-Comming...
+<!----Page 5: Team---->
+
+```{r child = 'pages/team.Rmd'}
+```
 
 
-
-Data
+Data {data-navmenu="About"}
 ===================================================================
 **Data**
 
