@@ -24,6 +24,12 @@ editor_options:
 ```{r child = 'pages/03-comparison-all-outbreaks.Rmd'}
 ```
 
+<!----Page 3: Last 5 years comparison---->
+
+```{r child = 'pages/last5-years-comparison.Rmd'}
+```
+
+
 <!----Page 4: Top 5 Outbreaks---->
 ```{r child = 'pages/04-comparison-top5-outbreaks.Rmd'}
 ```

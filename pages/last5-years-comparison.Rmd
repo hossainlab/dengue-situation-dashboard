@@ -1,0 +1,78 @@
+Last Five-years{data-navmenu="Comparisons"}
+===================================================================
+
+
+Row
+-------------------------------------------------------------------
+```{r, include=FALSE}
+# Five years comparison 
+last_five_years <- all_years |> 
+  filter(Year %in% c(2018, 2019, 2020, 2021, 2022, 2023)) |> 
+  group_by(Year) |> 
+  summarise(TotalCases = sum(Cases), 
+            TotalDeaths = sum(Deaths), 
+            CFR = round(sum(Deaths) / sum(Cases) * 100, 2))
+```
+
+### Dengue Case Comparison Last 5 Years (2023 up-to-date)
+
+```{r}
+plot_ly(data = last_five_years, x = ~Year, type = 'scatter', mode = 'lines+markers', 
+        name = 'Cases', y = ~TotalCases) |> 
+  add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
+  layout(title = "A 5-Year Trend Comparison (2023 up-to-date)", 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= -0.3))
+```
+
+### Dengue Case Comparison Last 5 Years (2023 up-to-date)
+
+```{r}
+# Viz 4: Dengue Case Comparison Last 5 Years (2023 up-to-date)
+plot_ly(data = last_five_years, x = ~Year) |> 
+  add_bars(y = ~TotalCases, name = 'Confirmed Cases', marker = list(color = '#3b528b')) |> 
+  layout(title = "Dengue Case Comparison Last 5 Years (2023 up-to-date)",
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Cases'),
+         barmode = "group",
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y = -0.3))
+```
+
+Row
+-------------------------------------------------------------------
+
+### Dengue Death Comparison Last 5 Years (2023 up-to-date)
+
+```{r}
+# Viz 4: Dengue Case Comparison Last 5 Years (2023 up-to-date)
+plot_ly(data = last_five_years, x = ~Year) |> 
+  add_bars(y = ~TotalDeaths, name = 'Confirmed Deaths', marker = list(color = '#440154')) |> 
+  layout(title = "Dengue Deaths Comparison Last 5 Years (2023 up-to-date)",
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Cases'),
+         barmode = "group",
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y = -0.3))
+```
+
+### Case Fatality Rate (CFR) in Over the Last Five Years
+
+```{r}
+library(DT)
+datatable(last_five_years, 
+          caption = htmltools::tags$caption(
+          style = 'caption-side: bottom; text-align: center;',
+    'Table 1: ', htmltools::em('Dengue cases, deaths, and case fatality rate (last five years)')
+  ))
+```
+
+
