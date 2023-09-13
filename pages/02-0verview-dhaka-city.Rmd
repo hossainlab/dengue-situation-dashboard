@@ -1,0 +1,169 @@
+<!----Page 2: Overview - Dhaka City---->
+
+```{r, package}
+library(googlesheets4)
+library(tidyverse)
+library(plotly)
+```
+
+```{r, data}
+# data url 
+dhaka_url <- "https://docs.google.com/spreadsheets/d/119U3_gjj1GR41hzUkr_Q_JcUJEbf3T1hPDdYS63GxNc/edit?usp=sharing"
+
+# read multiple data sheets 
+dhaka_dengue <- dhaka_url |> 
+  sheet_names() |> 
+  set_names() |> 
+  map_df(read_sheet, ss = dhaka_url, .id = "Month") |> 
+  mutate(Month = factor(Month, levels = month.name)) |> 
+  mutate(Date = as.Date(Date))
+```
+
+
+Dhaka City {data-navmenu="Overview"}
+===================================================================
+
+Row
+-------------------------------------------------------------------
+<!----Define color for value box---->
+```{r, dhaka-colors, include=FALSE}
+dhaka_confirmed_color <- "#FF5733"
+dhaka_active_color <- "#FFD700"
+dhaka_recovered_color <- "#00FF00"
+dhaka_death_color <- "#333333"
+dhaka_cfr_color <- "red"
+```
+
+
+### Confirmed Cases {.value-box}
+
+```{r, dhaka-confirmed-cases}
+dhaka_confirmed <- format(sum(dhaka_dengue$Cases, na.rm = T), big.mark = ",")
+valueBox(value = dhaka_confirmed, 
+         caption = "Total Confirmed Cases in 2023", 
+         color = dhaka_confirmed_color, 
+         icon = "fa-virus")
+```
+
+### Confirmed Deaths {.value-box}
+```{r,dhaka-death-cases}
+dhaka_deaths <- format(sum(dhaka_dengue$Deaths, na.rm = T), big.mark = ",")
+valueBox(value = dhaka_deaths, 
+         caption = "Total Death Cases in 2023", 
+         color = dhaka_death_color, 
+         icon = "fa-exclamation-triangle")
+```
+
+### Case Fatality Rate (CFR) {.value-box}
+```{r, dhaka-case-fatality-rate}
+dhaka_cfr <-  round(sum(dhaka_dengue$Deaths, na.rm = T) / sum(dhaka_dengue$Cases, na.rm = T) * 100, 2)
+
+valueBox(value = dhaka_cfr, 
+         caption = "Case Fatality Rate (CFR) in 2023", 
+         color = dhaka_cfr_color, 
+         icon = "fa-heart-broken")
+```
+
+
+### Recovered Cases {.value-box}
+```{r, dhaka-recovered-cases}
+dhaka_recovered <- format(sum(dhaka_dengue$Recovered, na.rm = T), big.mark = ",")
+valueBox(value = dhaka_recovered, 
+         caption = "Total Recovered Cases in 2023", 
+         color = dhaka_recovered_color, 
+         icon = "fa-check-circle")
+```
+
+### Active Cases {.value-box}
+```{r, dhaka-recovered-active-cases}
+dhaka_dengue$Active <- dhaka_dengue$Cases - dhaka_dengue$Deaths - dhaka_dengue$Recovered
+dhaka_active <- format(sum(dhaka_dengue$Active, na.rm = T), big.mark = ",")
+valueBox(value = dhaka_active, 
+         caption = "Total Active Cases in 2023", 
+         color = dhaka_active_color, 
+         icon = "fa-skull")
+```
+
+
+Row
+-----------------------------------------------------------------------
+### Monthly Dengue Cases, Deaths, and Recovered in Dhaka City
+```{r, dhaka_monthly_data_23, include=FALSE}
+dhaka_monthly_data_23 <- dhaka_dengue |> 
+  group_by(Month) |> 
+  summarise(TotalCases = sum(Cases, na.rm = T), 
+            TotalDeaths = sum(Deaths, na.rm = T), 
+            TotalRecovered = sum(Recovered, na.rm = T))
+```
+
+```{r, dhaka_monthly_data_23-viz-1}
+# Viz 1: Monthly Dengue Cases, Deaths, and Recovered 
+plot_ly(data = dhaka_monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+markers', name = 'Cases', y = ~TotalCases) |> 
+  add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
+  add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
+  layout(title = " Monthly Trends: Dengue Cases, Deaths, and Recoveries", 
+         xaxis = list(title = 'Date'),
+         yaxis = list(title = 'Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= -0.3))
+
+```
+
+
+### Number of Dengue Cases by Month in Dhaka City
+```{r, dhaka_monthly_data_23-viz-2}
+# Viz 2: Number of Dengue Cases
+plot_ly(data = dhaka_monthly_data_23, x = ~Month)  |> 
+  add_bars(y = ~TotalCases, name = 'Confirmed Cases', marker = list(color = '#fdae6b')) |> 
+  add_trace(y = ~TotalCases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  layout(title = "Monthly Dengue Cases",
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Confirmed Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y= -0.3))
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Number of Death Cases by Month in Dhaka City
+```{r, dhaka_monthly_data_23-viz-3}
+# Viz 3: Number of Death Cases in 2023
+plot_ly(data = dhaka_monthly_data_23, x = ~Month) |> 
+  add_bars(y = ~TotalDeaths, name = 'Confirmed Deaths', marker = list(color = '#969696')) |> 
+  add_trace(y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
+  layout(title = "Monthly Dengue Deaths",
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Death Cases'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y = -0.3))
+```
+
+
+### Month-wise Case Fatality Rate in Dhaka City 
+```{r, dhaka_cfr_data}
+dhaka_cfr_data <- dhaka_dengue |> 
+  group_by(Month) |> 
+  summarise(TotalCases = sum(Cases, na.rm = T), 
+            TotalDeaths = sum(Deaths, na.rm = T), 
+            CFR = round(sum(Deaths, na.rm = T) / sum(Cases, na.rm = T) * 100, 2)) 
+```
+
+```{r, dhaka_cfr_data-viz-4}
+# Viz 4: Number of Death Cases in 2023
+plot_ly(data = dhaka_cfr_data, x = ~Month) |> 
+  add_trace(y = ~CFR, type = 'scatter', mode = 'lines+markers', name = "Case Fatality Rate") |> 
+  layout(title = "Monthly Dengue Case Fatality Rate",
+         xaxis = list(title = 'Month'),
+         yaxis = list(title = 'Case Fatality Rate'), 
+         legend = list(orientation = "h", 
+                       xanchor = "center", 
+                       x = 0.5, 
+                       y = -0.3))
+```

@@ -12,24 +12,28 @@ editor_options:
   chunk_output_type: console
 ---
 
-<!----Page 1: Overview---->
-```{r child = 'pages/01-overview.Rmd'}
+<!----Page 1: Overview Bangladesh---->
+```{r child = 'pages/01-overview-bangladesh.Rmd'}
 ```
 
-<!----Page 2: All Outbreaks---->
-```{r child = 'pages/02-all-outbreaks.Rmd'}
+<!----Page 2: Dhaka City---->
+```{r child = 'pages/02-0verview-dhaka-city.Rmd'}
 ```
 
-<!----Page 3: Top 5 Outbreaks---->
-```{r child = 'pages/03-top5-outbreaks.Rmd'}
+<!----Page 3: All Outbreaks---->
+```{r child = 'pages/03-comparison-all-outbreaks.Rmd'}
 ```
 
-<!----Page 4: Global Situation---->
-```{r child = 'pages/04-global.Rmd'}
+<!----Page 4: Top 5 Outbreaks---->
+```{r child = 'pages/04-comparison-top5-outbreaks.Rmd'}
 ```
 
-<!----Page 5: Climate Variables---->
-```{r child = 'pages/05-climate.Rmd'}
+<!----Page 5: Global Situation---->
+```{r child = 'pages/05-global.Rmd'}
+```
+
+<!----Page 6: Climate Variables---->
+```{r child = 'pages/06-climate.Rmd'}
 ```
 
 <!----Page 5: Climate Variables---->
