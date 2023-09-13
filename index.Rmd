@@ -29,7 +29,6 @@ editor_options:
 ```{r child = 'pages/last5-years-comparison.Rmd'}
 ```
 
-
 <!----Page 4: Top 5 Outbreaks---->
 ```{r child = 'pages/04-comparison-top5-outbreaks.Rmd'}
 ```

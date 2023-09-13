@@ -80,19 +80,15 @@ data23$Year <- as.factor(data23$Year)
 
 ```{r, bd-overview-daily-data-2023}
 # daily data for 2023 
-daily_data_23 <- import_list(here::here("data/DengueCases2023.xlsx"),
-                             setclass = "data.table", 
-                             rbind_label = "file", 
-                             rbind = TRUE)
-# convert into date format 
-daily_data_23$Date <- as.Date(daily_data_23$Date)
-# impute missing values with zero 
-daily_data_23[is.na(daily_data_23)] <- 0
+daily_data_23_url <- "https://docs.google.com/spreadsheets/d/1QgYLR4FW0f9MxiH0GDZm2_5tZOdAlLZAKT4-8Tz9rwQ/edit?usp=sharing"
 
-# daily_data_23
-daily_data_23 <- daily_data_23 |> 
-  mutate(Month = lubridate::month(Date, label = TRUE),
-         Day = lubridate::day(Date)) 
+# read multiple data sheets 
+daily_data_23 <- daily_data_23_url |> 
+  sheet_names() |> 
+  set_names() |> 
+  map_df(read_sheet, ss = daily_data_23_url, .id = "Month") |> 
+  mutate(Month = factor(Month, levels = month.name)) |> 
+  mutate(Date = as.Date(Date))
 ```
 
 
