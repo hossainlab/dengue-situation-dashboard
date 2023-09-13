@@ -193,7 +193,7 @@ plot_ly(data = monthly_data_23, x = ~Month, type = 'scatter', mode = 'lines+mark
   add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
   add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
   layout(title = " Monthly Trends: Dengue Cases, Deaths, and Recoveries", 
-         xaxis = list(title = 'Date'),
+         xaxis = list(title = 'Months'),
          yaxis = list(title = 'Cases'), 
          legend = list(orientation = "h", 
                        xanchor = "center", 
@@ -220,8 +220,6 @@ plot_ly(data = data23, x = ~Months)  |>
                        y= -0.3))
 ```
 
-Row
------------------------------------------------------------------------
 
 ### Number of Death Cases by Month in 2023
 ```{r}
@@ -238,7 +236,8 @@ plot_ly(data = data23, x = ~Months) |>
                        y = -0.3))
 ```
 
-
+Row
+-----------------------------------------------------------------------
 ### Month-wise Case Fatality Rate in Bangladesh 
 ```{r, bd-overview-cfr-data}
 monthly_cfr_data_23 <- daily_data_23 |> 
@@ -247,7 +246,6 @@ monthly_cfr_data_23 <- daily_data_23 |>
             TotalDeaths = sum(Deaths, na.rm = T), 
             CFR = round(sum(Deaths, na.rm = T) / sum(Cases, na.rm = T) * 100, 2)) 
 ```
-
 ```{r, bd-overview-cfr-data-viz-4}
 # Viz 4: Number of Death Cases in 2023
  plot_ly(monthly_cfr_data_23, x = ~Month, y = ~CFR, type = 'bar', name = "Case Fatality Rate", marker = list(color = '#d8b365'))  |> 
@@ -261,4 +259,34 @@ monthly_cfr_data_23 <- daily_data_23 |>
                        y = -0.3))
 
 ```
+
+
+### Affected Case by Agre Group [01 Jan to 12 Sep 2023]
+
+```{r, demographics-data, include=FALSE}
+# data
+demographic_data <- read_sheet("https://docs.google.com/spreadsheets/d/1is72sf_4XUFCwJqhdWwveE00XNuxZ0pVKfN3OsmEnFI/edit?usp=sharing")
+
+demographic_data$AgeGroup <- as.factor(demographic_data$AgeGroup)
+```
+
+```{r, bd-overview-cases-age-group}
+# Viz 5: Dengue Cases by Age Group
+plot_ly(data = demographic_data, x = ~AgeGroup, y = ~Cases, type = "bar", name = "Cases",marker = list(color = "#bf812d")) %>%
+  layout(title = "Dengue Cases by Age Group",
+         xaxis = list(title = "Age Group", categoryorder='category ascending', 
+                      tickangle=60),
+         yaxis = list(title = "Number of Dengue Cases"))
+```
+### Dengue Death Report by Age Group [01 Jan to 12 Sep 2023]
+
+```{r, bd-overview-deaths-age-group}
+# Viz 6: Dengue Deaths by Age Group
+plot_ly(data = demographic_data, x = ~AgeGroup, y = ~Deaths, type = "bar", name = "Cases",marker = list(color = "#d6604d")) %>%
+  layout(title = "Dengue Deaths by Age Group",
+         xaxis = list(title = "Age Group", categoryorder='category ascending', tickangle=60),
+         yaxis = list(title = "Number of Deaths Cases"))
+```
+
+
 

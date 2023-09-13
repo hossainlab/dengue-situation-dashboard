@@ -93,7 +93,7 @@ dhaka_discharged_pct <- format(sum(dhaka_dengue$Recovered, na.rm = T)/sum(dhaka_
 valueBox(value = dhaka_discharged_pct, 
          caption = "% of Discharged in 2023", 
          color = dhaka_discharged_pct_color, 
-         icon = " fa-check-square")
+         icon = "fa-check-square")
 ```
 
 
@@ -126,7 +126,7 @@ plot_ly(data = dhaka_monthly_data_23, x = ~Month, type = 'scatter', mode = 'line
   add_trace(y = ~TotalDeaths, name = "Deaths", type = 'scatter', mode = 'lines+markers') |> 
   add_trace(y = ~TotalRecovered, name = "Recovered", type = 'scatter', mode = 'lines+markers') |> 
   layout(title = " Monthly Trends: Dengue Cases, Deaths, and Recoveries", 
-         xaxis = list(title = 'Date'),
+         xaxis = list(title = 'Months'),
          yaxis = list(title = 'Cases'), 
          legend = list(orientation = "h", 
                        xanchor = "center", 
@@ -143,7 +143,7 @@ plot_ly(data = dhaka_monthly_data_23, x = ~Month)  |>
   add_bars(y = ~TotalCases, name = 'Confirmed Cases', marker = list(color = '#fdae6b')) |> 
   add_trace(y = ~TotalCases, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
   layout(title = "Monthly Dengue Cases",
-         xaxis = list(title = 'Month'),
+         xaxis = list(title = 'Months'),
          yaxis = list(title = 'Confirmed Cases'), 
          legend = list(orientation = "h", 
                        xanchor = "center", 
@@ -161,7 +161,7 @@ plot_ly(data = dhaka_monthly_data_23, x = ~Month) |>
   add_bars(y = ~TotalDeaths, name = 'Confirmed Deaths', marker = list(color = '#969696')) |> 
   add_trace(y = ~TotalDeaths, type = 'scatter', mode = 'lines+markers', name = "Trends") |> 
   layout(title = "Monthly Dengue Deaths",
-         xaxis = list(title = 'Month'),
+         xaxis = list(title = 'Months'),
          yaxis = list(title = 'Death Cases'), 
          legend = list(orientation = "h", 
                        xanchor = "center", 
@@ -184,7 +184,7 @@ dhaka_cfr_data <- dhaka_dengue |>
  plot_ly(dhaka_cfr_data, x = ~Month, y = ~CFR, type = 'bar', name = "Case Fatality Rate", marker = list(color = '#67a9cf'))  |> 
   add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#252525')) |> 
   layout(title = "Monthly Dengue Case Fatality Rate",
-         xaxis = list(title = 'Month'),
+         xaxis = list(title = 'Months'),
          yaxis = list(title = 'Case Fatality Rate'), 
          legend = list(orientation = "h", 
                        xanchor = "center", 
@@ -192,3 +192,6 @@ dhaka_cfr_data <- dhaka_dengue |>
                        y = -0.3))
 
 ```
+
+
+

@@ -17,7 +17,7 @@ editor_options:
 ```
 
 <!----Page 2: Dhaka City---->
-```{r child = 'pages/02-0verview-dhaka-city.Rmd'}
+```{r child = 'pages/02-overview-dhaka-city.Rmd'}
 ```
 
 <!----Page 3: All Outbreaks---->
@@ -39,8 +39,7 @@ editor_options:
 ```
 
 <!----Page 6: Climate Variables---->
-```{r child = 'pages/06-climate.Rmd'}
-```
+
 
 <!----Page 5: Climate Variables---->
 ```{r child = 'pages/cfr.Rmd'}
