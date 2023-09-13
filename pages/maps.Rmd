@@ -1,0 +1,14 @@
+<!----
+# Documentation 01 - Package: bangladesh 
+# https://www.ovirahman.com/bangladesh/articles/introduction.html
+---->
+
+```{r}
+library(bangladesh)
+library(tidyverse)
+```
+
+```{r}
+bd_plot("division", type = "interactive")
+```
+

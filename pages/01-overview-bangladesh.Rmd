@@ -19,6 +19,8 @@ active_color <- "#FFD700"
 recovered_color <- "#00FF00"
 death_color <- "#333333"
 cfr_color <- "red"
+active_pct_color <- "#008080"
+discharged_pct_color <- "#008000"
 ```
 
 <!----Data preparation---->
@@ -119,6 +121,26 @@ valueBox(value = deaths,
          icon = "fa-exclamation-triangle")
 ```
 
+### Recovered Cases {.value-box}
+```{r, bd-overview-recovered}
+recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
+valueBox(value = recovered, 
+         caption = "Total Recovered Cases in 2023", 
+         color = recovered_color, 
+         icon = "fa-check-circle")
+```
+
+### Active Cases {.value-box}
+```{r, bd-overview-active}
+daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_23$Recovered
+active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
+valueBox(value = active, 
+         caption = "Total Active Cases in 2023", 
+         color = active_color, 
+         icon = "fa-skull")
+```
+
+
 ### Case Fatality Rate (CFR) {.value-box}
 ```{r, bd-overview-cfr}
 cfr <-  round(sum(daily_data_23$Deaths, na.rm = T) / sum(daily_data_23$Cases, na.rm = T) * 100, 2)
@@ -129,25 +151,27 @@ valueBox(value = cfr,
          icon = "fa-heart-broken")
 ```
 
+### Percentage of Discharged {.value-box}
+```{r, bd-overview-discharged_pct}
+discharged_pct <- format(sum(daily_data_23$Recovered, na.rm = T)/sum(daily_data_23$Cases, na.rm = T) * 100, digit = 2)
 
-### Recovered Cases {.value-box}
-```{r, bd-overview-recovered}
-recovered <- format(sum(daily_data_23$Recovered, na.rm = T), big.mark = ",")
-valueBox(value = recovered, 
-         caption = "Total Recovered Cases in 2023", 
-         color = recovered_color, 
-         icon = "fa-check-circle")
+valueBox(value = discharged_pct, 
+         caption = "% of Discharged in 2023", 
+         color = discharged_pct_color, 
+         icon = "fa-check-square")
 ```
 
 
-### Active Cases {.value-box}
-```{r, bd-overview-active}
+### Percentage of Active Cases {.value-box}
+```{r, bd-overview-active_pct}
+
 daily_data_23$Active <- daily_data_23$Cases - daily_data_23$Deaths - daily_data_23$Recovered
-active <- format(sum(daily_data_23$Active, na.rm = T), big.mark = ",")
-valueBox(value = active, 
-         caption = "Total Active Cases in 2023", 
-         color = active_color, 
-         icon = "fa-skull")
+
+active_pct <- format(sum(daily_data_23$Active, na.rm = T)/sum(daily_data_23$Cases, na.rm = T) * 100, digit = 2)
+valueBox(value = active_pct, 
+         caption = "% of Active Cases in 2023", 
+         color = active_pct_color, 
+         icon = "fa-exclamation-circle")
 ```
 
 

@@ -32,6 +32,8 @@ dhaka_active_color <- "#FFD700"
 dhaka_recovered_color <- "#00FF00"
 dhaka_death_color <- "#333333"
 dhaka_cfr_color <- "red"
+dhaka_active_pct_color <- "#008080"
+dhaka_discharged_pct_color <- "#008000"
 ```
 
 
@@ -54,16 +56,6 @@ valueBox(value = dhaka_deaths,
          icon = "fa-exclamation-triangle")
 ```
 
-### Case Fatality Rate (CFR) {.value-box}
-```{r, dhaka-case-fatality-rate}
-dhaka_cfr <-  round(sum(dhaka_dengue$Deaths, na.rm = T) / sum(dhaka_dengue$Cases, na.rm = T) * 100, 2)
-
-valueBox(value = dhaka_cfr, 
-         caption = "Case Fatality Rate (CFR) in 2023", 
-         color = dhaka_cfr_color, 
-         icon = "fa-heart-broken")
-```
-
 
 ### Recovered Cases {.value-box}
 ```{r, dhaka-recovered-cases}
@@ -84,6 +76,38 @@ valueBox(value = dhaka_active,
          icon = "fa-skull")
 ```
 
+### Case Fatality Rate (CFR) {.value-box}
+```{r, dhaka-case-fatality-rate}
+dhaka_cfr <-  round(sum(dhaka_dengue$Deaths, na.rm = T) / sum(dhaka_dengue$Cases, na.rm = T) * 100, 2)
+
+valueBox(value = dhaka_cfr, 
+         caption = "Case Fatality Rate (CFR) in 2023", 
+         color = dhaka_cfr_color, 
+         icon = "fa-heart-broken")
+```
+
+### Percentage of Discharged {.value-box}
+```{r, dhaka-discharged_pct}
+dhaka_discharged_pct <- format(sum(dhaka_dengue$Recovered, na.rm = T)/sum(dhaka_dengue$Cases, na.rm = T) * 100, digit = 2)
+
+valueBox(value = dhaka_discharged_pct, 
+         caption = "% of Discharged in 2023", 
+         color = dhaka_discharged_pct_color, 
+         icon = " fa-check-square")
+```
+
+
+### Percentage of Active Cases {.value-box}
+```{r, dhaka-active_pct}
+
+dhaka_dengue$Active <- dhaka_dengue$Cases - dhaka_dengue$Deaths - dhaka_dengue$Recovered
+
+dhaka_active_pct <- format(sum(dhaka_dengue$Active, na.rm = T)/sum(dhaka_dengue$Cases, na.rm = T) * 100, digit = 2)
+valueBox(value = dhaka_active_pct, 
+         caption = "% of Active Cases in 2023", 
+         color = dhaka_active_pct_color, 
+         icon = "fa-exclamation-circle")
+```
 
 Row
 -----------------------------------------------------------------------
