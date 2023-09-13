@@ -157,8 +157,8 @@ dhaka_cfr_data <- dhaka_dengue |>
 
 ```{r, dhaka_cfr_data-viz-4}
 # Viz 4: Number of Death Cases in 2023
-plot_ly(data = dhaka_cfr_data, x = ~Month) |> 
-  add_trace(y = ~CFR, type = 'scatter', mode = 'lines+markers', name = "Case Fatality Rate") |> 
+ plot_ly(dhaka_cfr_data, x = ~Month, y = ~CFR, type = 'bar', name = "Case Fatality Rate", marker = list(color = '#67a9cf'))  |> 
+  add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#252525')) |> 
   layout(title = "Monthly Dengue Case Fatality Rate",
          xaxis = list(title = 'Month'),
          yaxis = list(title = 'Case Fatality Rate'), 
@@ -166,4 +166,5 @@ plot_ly(data = dhaka_cfr_data, x = ~Month) |>
                        xanchor = "center", 
                        x = 0.5, 
                        y = -0.3))
+
 ```
