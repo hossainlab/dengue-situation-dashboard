@@ -4,7 +4,7 @@ Case Fatality Rate {data-navmenu="Comparisons"}
 Row
 -------------------------------------------------------------------
 
-### Case Fatality Rate (CFR) in Bangladesh [2015-2023]
+### Case Fatality Rate (CFR) in Bangladesh [2000-2023]
 
 ```{r}
 library(googlesheets4)
@@ -19,7 +19,7 @@ datatable(cfr_data,
 ```
 
 
-### Dengue Cases Over the Years[2015-2023]
+### Dengue Cases Over the Years[2000-2023]
 
 ```{r}
 # Create a line chart for Cases and Deaths
@@ -33,7 +33,7 @@ Row
 -------------------------------------------------------------------
 
 
-### Dengue Deaths Over the Years[2015-2023]
+### Dengue Deaths Over the Years[2000-2023]
 
 ```{r}
 # Create a line chart for Cases and Deaths
@@ -45,7 +45,7 @@ plot_ly(cfr_data, x = ~Year)  |>
 ```
 
 
-### Case Fatality Rate (CFR) Over the Years[2015-2023]
+### Case Fatality Rate (CFR) Over the Years[2000-2023]
 
 ```{r}
  plot_ly(cfr_data, x = ~Year, y = ~CFR, type = 'bar', name = "CFR", marker = list(color = '#a6bddb'))  |> 
