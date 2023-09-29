@@ -216,6 +216,8 @@ plot_ly(data = data23, x = ~Months)  |>
                        y= -0.3))
 ```
 
+Row
+-----------------------------------------------------------------------
 
 ### Number of Death Cases by Month in 2023
 ```{r}
@@ -232,8 +234,7 @@ plot_ly(data = data23, x = ~Months) |>
                        y = -0.3))
 ```
 
-Row
------------------------------------------------------------------------
+
 ### Month-wise Case Fatality Rate in Bangladesh 
 ```{r, bd-overview-cfr-data}
 monthly_cfr_data_23 <- daily_data_23 |> 
@@ -257,40 +258,40 @@ monthly_cfr_data_23 <- daily_data_23 |>
 ```
 
 
-### Affected Case by Agre Group [01 Jan to 12 Sep 2023]
+<!-- ### Affected Case by Agre Group [01 Jan to 12 Sep 2023] -->
 
-```{r, demographics-cases-data, include=FALSE}
-# data
-demographic_cases_data <- read_sheet("https://docs.google.com/spreadsheets/d/1is72sf_4XUFCwJqhdWwveE00XNuxZ0pVKfN3OsmEnFI/edit?usp=sharing", range = "Age-Sex-Distribution[CountryLevelCases]")
+<!-- ```{r, demographics-cases-data, include=FALSE} -->
+<!-- # data -->
+<!-- demographic_cases_data <- read_sheet("https://docs.google.com/spreadsheets/d/1is72sf_4XUFCwJqhdWwveE00XNuxZ0pVKfN3OsmEnFI/edit?usp=sharing", range = "Age-Sex-Distribution[CountryLevelCases]") -->
 
-demographic_cases_data$AgeGroup <- as.factor(demographic_cases_data$AgeGroup)
-```
+<!-- demographic_cases_data$AgeGroup <- as.factor(demographic_cases_data$AgeGroup) -->
+<!-- ``` -->
 
-```{r, bd-overview-cases-age-group}
-# Viz 5: Dengue Cases by Age Group
-plot_ly(data = demographic_cases_data, x = ~AgeGroup, y = ~TotalCases, type = "bar", name = "Cases",marker = list(color = "#bf812d"))  |> 
-  layout(title = "Dengue Cases by Age Group",
-         xaxis = list(title = "Age Group", categoryorder='category ascending', 
-                      tickangle=60),
-         yaxis = list(title = "Number of Dengue Cases"))
-```
-### Dengue Death Report by Age Group [01 Jan to 12 Sep 2023]
+<!-- ```{r, bd-overview-cases-age-group} -->
+<!-- # Viz 5: Dengue Cases by Age Group -->
+<!-- plot_ly(data = demographic_cases_data, x = ~AgeGroup, y = ~TotalCases, type = "bar", name = "Cases",marker = list(color = "#bf812d"))  |>  -->
+<!--   layout(title = "Dengue Cases by Age Group", -->
+<!--          xaxis = list(title = "Age Group", categoryorder='category ascending',  -->
+<!--                       tickangle=60), -->
+<!--          yaxis = list(title = "Number of Dengue Cases")) -->
+<!-- ``` -->
+<!-- ### Dengue Death Report by Age Group [01 Jan to 12 Sep 2023] -->
 
-```{r, demographics-deaths-data, include=FALSE}
-# data
-demographic_deaths_data <- read_sheet("https://docs.google.com/spreadsheets/d/1is72sf_4XUFCwJqhdWwveE00XNuxZ0pVKfN3OsmEnFI/edit?usp=sharing", range = "Age-Sex-Distribution[CountryLevelDeaths]")
+<!-- ```{r, demographics-deaths-data, include=FALSE} -->
+<!-- # data -->
+<!-- demographic_deaths_data <- read_sheet("https://docs.google.com/spreadsheets/d/1is72sf_4XUFCwJqhdWwveE00XNuxZ0pVKfN3OsmEnFI/edit?usp=sharing", range = "Age-Sex-Distribution[CountryLevelDeaths]") -->
 
-demographic_deaths_data$AgeGroup <- as.factor(demographic_deaths_data$AgeGroup)
-```
+<!-- demographic_deaths_data$AgeGroup <- as.factor(demographic_deaths_data$AgeGroup) -->
+<!-- ``` -->
 
 
-```{r, bd-overview-deaths-age-group}
-# Viz 6: Dengue Deaths by Age Group
-plot_ly(data = demographic_deaths_data, x = ~AgeGroup, y = ~TotalDeaths, type = "bar", name = "Cases",marker = list(color = "#d6604d")) |> 
-  layout(title = "Dengue Deaths by Age Group",
-         xaxis = list(title = "Age Group", categoryorder='category ascending', tickangle=60),
-         yaxis = list(title = "Number of Deaths Cases"))
-```
+<!-- ```{r, bd-overview-deaths-age-group} -->
+<!-- # Viz 6: Dengue Deaths by Age Group -->
+<!-- plot_ly(data = demographic_deaths_data, x = ~AgeGroup, y = ~TotalDeaths, type = "bar", name = "Cases",marker = list(color = "#d6604d")) |>  -->
+<!--   layout(title = "Dengue Deaths by Age Group", -->
+<!--          xaxis = list(title = "Age Group", categoryorder='category ascending', tickangle=60), -->
+<!--          yaxis = list(title = "Number of Deaths Cases")) -->
+<!-- ``` -->
 
 
 
