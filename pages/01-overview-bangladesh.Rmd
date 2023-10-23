@@ -14,13 +14,13 @@ library(plotly)
 
 <!----Define color for value box---->
 ```{r, bd-overview-colors, include=FALSE}
-confirmed_color <- "#FF5733"
-active_color <- "#FFD700"
-recovered_color <- "#00FF00"
-death_color <- "#333333"
-cfr_color <- "red"
-active_pct_color <- "#008080"
-discharged_pct_color <- "#008000"
+confirmed_color <- RColorBrewer::brewer.pal(9, "PuRd")[7]
+active_color <-  "#1f77b4"
+recovered_color <- "forestgreen"
+death_color <- "red"
+cfr_color <- "#660708"
+active_pct_color <-"#ba181b"
+discharged_pct_color <- "#e5383b"
 ```
 
 <!----Data preparation---->
@@ -92,10 +92,10 @@ daily_data_23 <- daily_data_23_url |>
 ```
 
 
-Bangladesh {data-navmenu="Overview"}
+Bangladesh {data-navmenu="Summary"}
 ===================================================================
 
-Row
+Row { data-width=150 }
 -------------------------------------------------------------------
 ### Confirmed Cases {.value-box}
 
@@ -234,28 +234,57 @@ plot_ly(data = data23, x = ~Months) |>
                        y = -0.3))
 ```
 
-
-### Month-wise Case Fatality Rate in Bangladesh 
-```{r, bd-overview-cfr-data}
-monthly_cfr_data_23 <- daily_data_23 |> 
-  group_by(Month) |> 
-  summarise(TotalCases = sum(Cases, na.rm = T), 
-            TotalDeaths = sum(Deaths, na.rm = T), 
-            CFR = round(sum(Deaths, na.rm = T) / sum(Cases, na.rm = T) * 100, 2)) 
+### Distribution between Recovery and Death
+```{r}
+plot_ly(data = daily_data_23,
+                x = ~ Date,
+                y = ~ Recovered, 
+                name = 'Recovered', 
+                fillcolor = recovered_color,
+                type = 'scatter',
+                mode = 'none', 
+                stackgroup = 'one', groupnorm = 'percent') |> 
+add_trace( y = ~ Deaths, 
+                     name = "Death",
+                     fillcolor = death_color) |> 
+layout(title = "",
+                 legend = list(x = 0.75, y = 0.05),
+                 ticksuffix = "%",
+                 yaxis = list(title = "Recoverd / Death Dist (%)", 
+                              showgrid = FALSE,
+                              hoverformat = ".2f",
+                              ticksuffix = "%"),
+                 xaxis = list(title = "Source: ", showgrid = FALSE),
+                 hovermode = "compared")
 ```
-```{r, bd-overview-cfr-data-viz-4}
-# Viz 4: Number of Death Cases in 2023
- plot_ly(monthly_cfr_data_23, x = ~Month, y = ~CFR, type = 'bar', name = "Case Fatality Rate", marker = list(color = '#d8b365'))  |> 
-  add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#252525')) |> 
-  layout(title = "Monthly Dengue Case Fatality Rate",
-         xaxis = list(title = 'Month'),
-         yaxis = list(title = 'Case Fatality Rate'), 
-         legend = list(orientation = "h", 
-                       xanchor = "center", 
-                       x = 0.5, 
-                       y = -0.3))
 
-```
+
+
+
+
+
+
+<!-- ### Month-wise Case Fatality Rate in Bangladesh  -->
+<!-- ```{r, bd-overview-cfr-data} -->
+<!-- monthly_cfr_data_23 <- daily_data_23 |>  -->
+<!--   group_by(Month) |>  -->
+<!--   summarise(TotalCases = sum(Cases, na.rm = T),  -->
+<!--             TotalDeaths = sum(Deaths, na.rm = T),  -->
+<!--             CFR = round(sum(Deaths, na.rm = T) / sum(Cases, na.rm = T) * 100, 2))  -->
+<!-- ``` -->
+<!-- ```{r, bd-overview-cfr-data-viz-4} -->
+<!-- # Viz 4: Number of Death Cases in 2023 -->
+<!--  plot_ly(monthly_cfr_data_23, x = ~Month, y = ~CFR, type = 'bar', name = "Case Fatality Rate", marker = list(color = '#d8b365'))  |>  -->
+<!--   add_trace(y = ~CFR, name = "Trend", type = 'scatter', mode = 'lines+markers', line = list(color = '#252525')) |>  -->
+<!--   layout(title = "Monthly Dengue Case Fatality Rate", -->
+<!--          xaxis = list(title = 'Month'), -->
+<!--          yaxis = list(title = 'Case Fatality Rate'),  -->
+<!--          legend = list(orientation = "h",  -->
+<!--                        xanchor = "center",  -->
+<!--                        x = 0.5,  -->
+<!--                        y = -0.3)) -->
+
+<!-- ``` -->
 
 
 <!-- ### Affected Case by Agre Group [01 Jan to 12 Sep 2023] -->

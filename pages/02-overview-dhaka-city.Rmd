@@ -20,10 +20,10 @@ dhaka_dengue <- dhaka_url |>
 ```
 
 
-Dhaka City {data-navmenu="Overview"}
+Dhaka City {data-navmenu="Summary"}
 ===================================================================
 
-Row
+Column { data-width=150 }
 -------------------------------------------------------------------
 <!----Define color for value box---->
 ```{r, dhaka-colors, include=FALSE}
